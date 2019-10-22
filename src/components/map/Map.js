@@ -11,6 +11,7 @@ import "./Map.css"
 class MapPage extends Component {
   constructor() {
     super()
+    //Shouldn't this be in the redux store?
     this.state = {
       start: '',
       end: '',
@@ -35,7 +36,9 @@ class MapPage extends Component {
     this.props.getVehicles()
   }
 
-  toggleSidebar = () => {
+    //toggleSidebar has been moved into the component called MapHeader which is rendered as an import an WebMap
+    //will need to refactor so it is part of the redux store
+    toggleSidebar = () => {
     //Google analytics tracking
     window.gtag("event", "sidebar toggle", {
       event_category: "sidebar",
@@ -438,15 +441,19 @@ class MapPage extends Component {
     console.log(this.state[stateKey])
   }
 
+  //nav has been moved into it's own component called MapHeader and is rendered as an import an WebMap
   render() {
     return (
       <div>
-        {/* <Nav /> */}
+        {/* <Nav /> */} 
         <div className="open-button-wrap">
           <i className="fas fa-arrow-circle-right" onClick={this.toggleSidebar}   ></i>
           
           <NavLink  to="/">
-          <Button className="logout-btn"variant="warning">{localStorage.token ? `Log Out` : `Login / Signup`}</Button>
+            <Button 
+              className="logout-btn"
+              variant="warning">{localStorage.token ? `Log Out` : `Login / Signup`}
+            </Button>
           </NavLink>
           
         </div>
