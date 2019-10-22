@@ -47,7 +47,7 @@ class MapPage extends Component {
   //this function displays the map initially when the app is opened, is called when the component mounts
   //loads a script and calls initmap
   renderMap = () => {
-    loadScript(`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLEMAP}&callback=initMap`)
+    loadScript(`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_KEY}&callback=initMap`)
     window.initMap = this.initMap
   }
   //called by initmap to display the initial map when the app is open
