@@ -3,12 +3,13 @@ import { loadModules } from 'esri-loader';
 import Sidebar from '../sidebar/Sidebar'
 import { NavLink } from 'react-router-dom'
 import { getVehicles } from '../../store/actions'
+import { withRouter } from 'react-router-dom'
 import { connect } from "react-redux"
 import Button from 'react-bootstrap/Button'
 
 import MapHeader from '../header/MapHeader'
 
-const WebMapView = () => {
+const WebMap = () => {
     const mapRef = useRef();
 
     useEffect(
@@ -50,4 +51,9 @@ const WebMapView = () => {
     )
 };
 
-export default WebMapView
+const mapStateToProps = state => ({
+    vehicles: state.vehicles,
+    selected_id: state.selected_id
+})
+
+export default withRouter(connect(mapStateToProps, { getVehicles })(WebMap))
