@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../sidebar/Sidebar';
 import axios from 'axios';
 import { NavLink } from 'react-router-dom';
@@ -8,11 +8,9 @@ import { connect } from "react-redux";
 import Button from 'react-bootstrap/Button';
 
 import "./Map.css"
-class MapPage extends Component {
-  constructor() {
-    super()
-    //Shouldn't this be in the redux store?
-    this.state = {
+const MapPage = (props) => {
+
+    const [state, setState] = useState({
       start: '',
       end: '',
       sidebarOpen: true,
@@ -28,33 +26,35 @@ class MapPage extends Component {
       campsiteSelected: false, 
       pointOfInterestDistance: 5, 
       textDirections: []
-    }
-  }
+    })
   
-  componentDidMount() {
-    this.renderMap()
-    this.props.getVehicles()
-  }
+  
+  useEffect(() => {
+    renderMap()
+    getVehicles()
+  }, [])
+    
+  
 
     //toggleSidebar has been moved into the component called MapHeader which is rendered as an import an WebMap
     //will need to refactor so it is part of the redux store
-    toggleSidebar = () => {
+    const toggleSidebar = () => {
     //Google analytics tracking
     window.gtag("event", "sidebar toggle", {
       event_category: "sidebar",
       event_label: "sidebar toggle"
     });
-    this.setState({ sidebarOpen: !this.state.sidebarOpen })
+    setState({ sidebarOpen: !state.sidebarOpen })
   }
 
   //this function displays the map initially when the app is opened, is called when the component mounts
   //loads a script and calls initmap
-  renderMap = () => {
+  const renderMap = () => {
     loadScript(`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_KEY}&callback=initMap`)
-    window.initMap = this.initMap
+    window.initMap = initMap
   }
   //called by initmap to display the initial map when the app is open
-  initMap = () => {
+  const initMap = () => {
     var directionsService = new window.google.maps.DirectionsService();
     var directionsDisplay = new window.google.maps.DirectionsRenderer();
    
@@ -64,7 +64,7 @@ class MapPage extends Component {
     });
     
     
-    this.setState({
+    setState({
       directionsService,
       directionsDisplay
     })
@@ -84,48 +84,48 @@ class MapPage extends Component {
       // Browser doesn't support Geolocation
       console.log("Error finding location")
     }
-    // this.onChangeHandler(e);
-    document.querySelector('form').addEventListener('submit', this.onChangeHandler)
+    // onChangeHandler(e);
+    document.querySelector('form').addEventListener('submit', onChangeHandler)
    
   }
 
    //selects the map from google maps and puts it on the components state
-   setMapToState = () => {
+   const setMapToState = () => {
     var map = new window.google.maps.Map(document.getElementById('map'), {
-      center: {lat: parseFloat(this.state.startCoord && this.state.startCoord.geometry.y.toFixed(4)), lng: parseFloat(this.state.startCoord && this.state.startCoord.geometry.x.toFixed(4)) },
+      center: {lat: parseFloat(state.startCoord && state.startCoord.geometry.y.toFixed(4)), lng: parseFloat(state.startCoord && state.startCoord.geometry.x.toFixed(4)) },
       zoom: 10
     });
-    this.setState({
+    setState({
       map: map
     })
   }
   
   //stores the changes as someone types in the start and end boxes on the routing form
   //basic text change handler
-  routeChangeHandler = (e) => {
-    this.setState({
+  const routeChangeHandler = (e) => {
+    setState({
       [e.target.name]: e.target.value
     })
   }
 
   //this function is triggered when the route button is clicked
   //calls the geocode() function for start and end, triggers a series of functions/api calls
-  onChangeHandler = (e) => { 
-    this.setState({loading: "searching addresses"})
+  const onChangeHandler = (e) => { 
+    setState({loading: "searching addresses"})
     // e.preventDefault()
-    //this.setState({polygonsArray: []})
-    this.geocode(this.state.start, "startCoord");
-    //this.geocode(this.state.end, "endCoord");
+    //setState({polygonsArray: []})
+    geocode(state.start, "startCoord");
+    //geocode(state.end, "endCoord");
   }
 
   //calls ArcGIS geocode API, converts the address entered in the route form to gps coordinates
   //calls routeBeforeBarriers ()
-  geocode = (address, coordinate) => {
+  const geocode = (address, coordinate) => {
     axios
     .get(`https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?f=json&singleLine=${address}&outFields=Match_addr,Addr_type`)
     .then(res => {
       if(res){
-      this.setState({[coordinate]: {
+      setState({[coordinate]: {
         "geometry": {
         "x": res.data.candidates[0].location.x, //xcorresponds to longitude
         "y": res.data.candidates[0].location.y, //y corresponds to latitude
@@ -140,11 +140,11 @@ class MapPage extends Component {
   }, 
    () => {
      if(coordinate === "startCoord"){
-      this.geocode(this.state.end, "endCoord");
+      geocode(state.end, "endCoord");
      }
     else if(coordinate === "endCoord"){
-        this.setState({loading: "checking initial route"});
-        this.routeBeforeBarriers();
+        setState({loading: "checking initial route"});
+        routeBeforeBarriers();
       }
    }
   )
@@ -153,14 +153,14 @@ class MapPage extends Component {
     })
     .catch(err => {
       console.log("gecode err", err)
-      this.setState({loading: "problem geocoding, please try again"});
+      setState({loading: "problem geocoding, please try again"});
     })
 
   }
 
   //calls arcGIS route API, makes route without barriers, loops along said route to check for low clearance
   //calls clearanceAPI() to check for barriers if height is > 0
-  routeBeforeBarriers= () => {
+  const routeBeforeBarriers= () => {
     var formData = new FormData();
     formData.append('f', 'json');
     formData.append('token', process.env.REACT_APP_ARC_KEY);
@@ -168,8 +168,8 @@ class MapPage extends Component {
       JSON.stringify({
         "type": "features",
         "features": [
-          this.state.startCoord,
-          this.state.endCoord
+          state.startCoord,
+          state.endCoord
         ]
       }));
     formData.append('findBestSequence', false);
@@ -185,7 +185,7 @@ class MapPage extends Component {
         let increment = 500; //variable for breaking the route into chunks for the clearance api, call will be made every nth coordinate returned from ArcGIS
         let polyArrayLocal = []; //stores barriers beofre they are set to state
         let lastStartPoint = resLength - (resLength % increment); //the value of i when the loop is on it's last run (ex. i = 1000 for an array of length 1200 with increments of 500)
-        this.setState({loading: "checking clearance"}) //changes loading message displayed below routing form
+        setState({loading: "checking clearance"}) //changes loading message displayed below routing form
         for (let i = 0; i < resLength; i=i+increment) {
           startCoordinate = { lat: res.data.routes.features[0].geometry.paths[0][i][1], lng: res.data.routes.features[0].geometry.paths[0][i][0]}
          
@@ -199,14 +199,14 @@ class MapPage extends Component {
           }
           //function that call the clearance api
           //startCoordinate and endCoordinate are sent to make the API call, polyArrayLocal stores the response from the api, i and last startPoint are used check when the loops is finished
-          this.clearanceAPI(startCoordinate, endCoordinate, polyArrayLocal, i, lastStartPoint);
+          clearanceAPI(startCoordinate, endCoordinate, polyArrayLocal, i, lastStartPoint);
           
         }
       }
       })
       .catch(err => {
         console.log("arc route err:", err);
-        this.setState({loading: "problem with initial route, please try again"});
+        setState({loading: "problem with initial route, please try again"});
       })
 
   }
@@ -215,14 +215,14 @@ class MapPage extends Component {
   //startCoordinate and endCoordinate are sent to make the API call, polyArrayLocal stores the response from the api, i and last startPoint are used check when the loops is finished
   //calls api to check low clearances on route
   //call initRoute() to make new route with barriers/clearances included
-  clearanceAPI = (start, end, polyArrayLocal, i, lastStartPoint) => {
+  const clearanceAPI = (start, end, polyArrayLocal, i, lastStartPoint) => {
     //sets height to zero intially
     let heightOfSelectedVehicle = 0;
     //if height has been set for a vehicle, checks the height and assigns it as the value to be sent to the api
-    if(this.props.vehicles.vehicles){
-      this.props.vehicles.vehicles.map( e => {
+    if(props.vehicles.vehicles){
+      props.vehicles.vehicles.map( e => {
         //checks if a vehicla has been selected by the user
-        if(e.id === this.props.selected_id){
+        if(e.id === props.selected_id){
             heightOfSelectedVehicle = e.height;
         }
         return heightOfSelectedVehicle;
@@ -256,19 +256,19 @@ class MapPage extends Component {
           //if we have made the final call to this api, as checked using values from the previous function, then we call the init route function
           if(i === lastStartPoint){
             console.log("init conditional")
-            this.setState(
+            setState(
               {
-                ...this.state.polygonsArray,
+                ...state.polygonsArray,
                 polygonsArray: polyArrayLocal
               },
               //this callback insure the function is called after the state that it need is properly set
-              () => this.initRoute()
+              () => initRoute()
             );
           }
         }
       })
       .catch(err => {
-        this.setState({loading: "problem getting clearance info, please try again"})
+        setState({loading: "problem getting clearance info, please try again"})
         console.log("clearance error:", err);
       })
   }
@@ -276,14 +276,14 @@ class MapPage extends Component {
   //makes call to the routing API with barriers included
   //displays route to google maps
   //calls pointsOfInterest()
-  initRoute = () => {  
-    this.setMapToState();
-    this.setState({loading: "making final route"})
-    console.log("length for markers loop", this.state.polygonsArray.length);
+  const initRoute = () => {  
+    setMapToState();
+    setState({loading: "making final route"})
+    console.log("length for markers loop", state.polygonsArray.length);
 
 
-    console.log("start COORD", this.state.startCoord);
-    console.log("end COORD", this.state.endCoord);
+    console.log("start COORD", state.startCoord);
+    console.log("end COORD", state.endCoord);
     var formData = new FormData();
     formData.append('f', 'json');
     formData.append('token', process.env.REACT_APP_ARC_KEY);
@@ -291,15 +291,15 @@ class MapPage extends Component {
       JSON.stringify({
         "type": "features",
         "features": [
-          this.state.startCoord,
-          this.state.endCoord
+          state.startCoord,
+          state.endCoord
         ]
       }));
     formData.append("polygonBarriers", JSON.stringify(
       {
         "features": [{
           "geometry": {
-            "rings": this.state.polygonsArray
+            "rings": state.polygonsArray
           },
           "attributes": {
             "Name": "Bridge",
@@ -315,7 +315,7 @@ class MapPage extends Component {
     }
     axios.post("https://route.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World/solve", formData, config)
       .then(res => {
-        this.setState({Coordinates: []})
+        setState({Coordinates: []})
        for (let i = 0; i < res.data.routes.features[0].geometry.paths[0].length; i++) {
           let lng = res.data.routes.features[0].geometry.paths[0][i][0];
           let lat = res.data.routes.features[0].geometry.paths[0][i][1];
@@ -324,11 +324,11 @@ class MapPage extends Component {
           let Coordinate = { lat: null, lng: null }
           Coordinate.lat = lat;
           Coordinate.lng = lng;
-          this.setState({
-            Coordinates: [...this.state.Coordinates, Coordinate]
+          setState({
+            Coordinates: [...state.Coordinates, Coordinate]
           }) 
         }
-        console.log("coords array after loop (w/barriers)", this.state.Coordinates);
+        console.log("coords array after loop (w/barriers)", state.Coordinates);
         let directionsResArr = res.data.directions[0].features;
         console.log("directions res arr", directionsResArr)
         let newDirectionsArray = [];
@@ -336,43 +336,43 @@ class MapPage extends Component {
            newDirectionsArray.push (directionsResArr[i].attributes.text);
         }
         console.log('directions array', newDirectionsArray);
-        this.setState({textDirections: newDirectionsArray})
+        setState({textDirections: newDirectionsArray})
 
         //NOTE: the following loop will display markes for all the low clearance trianges on the map
         //it is commented out as it makes the UI cluttered for the user
         //it probably SHOULD NOT BE DELETED unless another dev tool has been made to replace it, as it allows one to visually see what parts of the map we are blocking
-        // for(let i = 0; i < this.state.polygonsArray.length; i++){
+        // for(let i = 0; i < state.polygonsArray.length; i++){
         //   console.log("markers i", i);
         //   let displayPoly = [];     
         //   for(let j = 0; j < 3; j++){
-        //     displayPoly[0] = {lat: this.state.polygonsArray[i][j][1] , lng: this.state.polygonsArray[i][j][0]};
-        //     displayPoly[1] = {lat: this.state.polygonsArray[i][j][1], lng:  this.state.polygonsArray[i][j][0]};
-        //     displayPoly[2] = {lat: this.state.polygonsArray[i][j][1], lng: this.state.polygonsArray[i][j][0] };
+        //     displayPoly[0] = {lat: state.polygonsArray[i][j][1] , lng: state.polygonsArray[i][j][0]};
+        //     displayPoly[1] = {lat: state.polygonsArray[i][j][1], lng:  state.polygonsArray[i][j][0]};
+        //     displayPoly[2] = {lat: state.polygonsArray[i][j][1], lng: state.polygonsArray[i][j][0] };
         //     console.log(`markers poly ${j}`, displayPoly);
         //       new window.google.maps.Marker({
-        //         map: this.state.map,
+        //         map: state.map,
         //         label: `${j}`,
         //         position: displayPoly[j]      
         //     }) 
         //   }
         // }
     
-        this.pointsOfInterest();
+        pointsOfInterest();
 
         var polyPath = new window.google.maps.Polyline({
-          path: this.state.Coordinates,
+          path: state.Coordinates,
           geodesic: true,
           strokeColor: '#FF0000',
           strokeOpacity: 1.0,
           strokeWeight: 4
         });
 
-        polyPath.setMap(this.state.map);
+        polyPath.setMap(state.map);
 
-        this.setState({loading: "routing successful"})
+        setState({loading: "routing successful"})
       })
       .catch(err => {
-        this.setState({loading: "problem making final route, please try again"})
+        setState({loading: "problem making final route, please try again"})
         console.log("arc route err:", err);
       })
 
@@ -381,18 +381,18 @@ class MapPage extends Component {
 
   //checks if any points of interest have been checked off
   //if yes, calls pointOfInterest() and passes in the relevant information
-  pointsOfInterest = () => {
-    console.log("POI STATE ENDPOINT", this.state.endCoord);
-    if(this.state.walmartSelected === true){
-      this.pointOfInterestAPI("walmart", "lightblue");
+  const pointsOfInterest = () => {
+    console.log("POI STATE ENDPOINT", state.endCoord);
+    if(state.walmartSelected === true){
+      pointOfInterestAPI("walmart", "lightblue");
     }
-    if(this.state.campsiteSelected === true){
-      this.pointOfInterestAPI("campsite", "tan");
+    if(state.campsiteSelected === true){
+      pointOfInterestAPI("campsite", "tan");
     }
   }
 
   //makes a call to the point of interest api
-  pointOfInterestAPI = (type, color) => {
+  const pointOfInterestAPI = (type, color) => {
     var bar = {
 //      path: 'M 125,5 155,90 245,90 175,145 200,230 125,180 50,230 75,145 5,90 95,90 z',
       path: 'M -30 -10, 30 -10, 30 10, 5 10, 0 20, -5 10, -30 10 z',
@@ -404,9 +404,9 @@ class MapPage extends Component {
     };
 
     let post = {
-      "latitude": this.state.endCoord.geometry.y,
-      "longitude": this.state.endCoord.geometry.x,
-      "distance": parseInt(this.state.pointOfInterestDistance)
+      "latitude": state.endCoord.geometry.y,
+      "longitude": state.endCoord.geometry.x,
+      "distance": parseInt(state.pointOfInterestDistance)
     }
   
     axios.post(`https://dr7ajalnlvq7c.cloudfront.net/fetch_${type}`, post)
@@ -414,7 +414,7 @@ class MapPage extends Component {
         if(res){
           res.data.map(e => {
             new window.google.maps.Marker({
-              map: this.state.map,
+              map: state.map,
               icon: bar,
               label: `${type}`,
               position: {lat: e.latitude, lng: e.longitude}      
@@ -428,26 +428,26 @@ class MapPage extends Component {
   }
 
   //toggles a value when point of interest button is clicked
-  toggle = (stateKey) => {
+  const toggle = (stateKey) => {
     //Google analytics tracking
     window.gtag("event", "checking points of interest", {
       event_category: "points of interest",
       event_label: "checking points of interest"
     });
     console.log(stateKey)
-    this.setState({
-      [stateKey]: !this.state[stateKey]
+    setState({
+      [stateKey]: !state[stateKey]
     })
-    console.log(this.state[stateKey])
+    console.log(state[stateKey])
   }
 
   //nav has been moved into it's own component called MapHeader and is rendered as an import an WebMap
-  render() {
+
     return (
       <div>
         {/* <Nav /> */} 
         <div className="open-button-wrap">
-          <i className="fas fa-arrow-circle-right" onClick={this.toggleSidebar}   ></i>
+          <i className="fas fa-arrow-circle-right" onClick={toggleSidebar}   ></i>
           
           <NavLink  to="/">
             <Button 
@@ -458,22 +458,22 @@ class MapPage extends Component {
           
         </div>
         <Sidebar
-          textDirections={this.state.textDirections}
-          toggle={this.toggle}
-          walmartSelected={this.state.walmartSelected}
-          campsiteSelected={this.state.campsiteSelected}
-          pointOfInterestDistance={this.state.pointOfInterestDistance}
-          loading={this.state.loading}
-          routeChangeHandler={this.routeChangeHandler}
-          onChangeHandler={this.onChangeHandler}
-          start={this.state.start}
-          end={this.state.end}
-          toggleSidebar={this.toggleSidebar} sidebarOpen={this.state.sidebarOpen} />
+          textDirections={state.textDirections}
+          toggle={toggle}
+          walmartSelected={state.walmartSelected}
+          campsiteSelected={state.campsiteSelected}
+          pointOfInterestDistance={state.pointOfInterestDistance}
+          loading={state.loading}
+          routeChangeHandler={routeChangeHandler}
+          onChangeHandler={onChangeHandler}
+          start={state.start}
+          end={state.end}
+          toggleSidebar={toggleSidebar} sidebarOpen={state.sidebarOpen} />
         <div id="map" ></div>
       </div>
     );
-  }
-}
+ }
+
 
 //google maps script
 function loadScript(url) {

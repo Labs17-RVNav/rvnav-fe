@@ -13,7 +13,8 @@ export const INVALID_CREDENTIALS = "INVALID_CREDENTIALS";
 export const CLEAR_ERROR = "CLEAR_ERROR";
 export const DUPLICATE_USER = "DUPLICATE_USER";
 export const DUPLICATE_EMAIL = "DUPLICATE_EMAIL";
-export const  LOGOUT = " LOGOUT";
+export const LOGOUT = " LOGOUT";
+export const CLOSE_SIDE_BAR = "CLOSE_SIDE_BAR ";
 
 export function authError(error) {
  return { type: "AUTH_ERROR", payload: error };
@@ -21,6 +22,10 @@ export function authError(error) {
 
 export function clearError() {
  return { type: CLEAR_ERROR };
+}
+
+export function closeSideBar() {
+  return { type: CLOSE_SIDE_BAR};
 }
 
 export const register = creds => {

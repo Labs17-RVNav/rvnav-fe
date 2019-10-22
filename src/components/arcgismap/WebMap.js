@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { loadModules } from 'esri-loader';
 import Sidebar from '../sidebar/Sidebar'
 import { NavLink } from 'react-router-dom'
-import { getVehicles } from '../../store/actions'
+import { getVehicles, closeSideBar } from '../../store/actions'
 import { withRouter } from 'react-router-dom'
 import { connect } from "react-redux"
 import Button from 'react-bootstrap/Button'

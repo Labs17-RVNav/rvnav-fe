@@ -1,6 +1,6 @@
 import { LOADING, REGISTER, LOGIN, LOGOUT, ADD_VEHICLE, GET_VEHICLE, 
   DELETE_VEHICLE,
-  DUPLICATE_USER, DUPLICATE_EMAIL, AUTH_ERROR, INVALID_CREDENTIALS, CLEAR_ERROR} from '../actions';
+  DUPLICATE_USER, DUPLICATE_EMAIL, AUTH_ERROR, INVALID_CREDENTIALS, CLEAR_ERROR, CLOSE_SIDE_BAR} from '../actions';
 
 import {
   SELECTED
@@ -10,7 +10,8 @@ const initialState = {
   data: [],
   vehicles: {},
   error: null,
-  selected_id: null
+  selected_id: null,
+  // sidebar_open: true,
 };
 
 export const reducer = (state = initialState, action) => {
@@ -105,6 +106,11 @@ export const reducer = (state = initialState, action) => {
           ...state,
           selected_id: action.payload
         }
+      // case CLOSE_SIDE_BAR:
+      //   return {
+      //     ...state,
+      //     sidebar_open: !sidebar_open
+      //   }  
     default:
       return state;
   }
