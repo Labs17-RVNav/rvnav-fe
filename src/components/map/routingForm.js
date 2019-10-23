@@ -14,6 +14,7 @@ const RoutingForm = (props) => {
       }
       return name;
     })
+    console.log('props on RoutingForm', props)
 
     return (
       <div>
