@@ -11,8 +11,8 @@ const App = () => {
     <div className="App">
       <Route path="/" exact component={LandingPage} />
       <Route path="/auth" component={Auth} />
-      {/* <Route path="/map" component={Map} />    */}
-      <Route path="/map" component={WebMap} />  
+      <Route path="/map" component={Map} />   
+      {/* <Route path="/map" component={WebMap} />   */}
     </div>
   );
 };

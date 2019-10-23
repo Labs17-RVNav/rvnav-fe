@@ -11,6 +11,7 @@ const Sidebar = (props) => {
         routing: "on",   
         vehicles: "off" 
     })
+    console.log('props on Sidebar', props)
 
 
     const closeVehicleForm = () => setState({...state, vehicleForm: "off", vehicles: "on"})
@@ -25,7 +26,7 @@ const Sidebar = (props) => {
             [event.target.id]: "on"
         })
 
-   
+    }
     
         //console.log("sidebar props", props);
         return (
@@ -97,7 +98,6 @@ const Sidebar = (props) => {
                 </div>            
             </div>            
         )        
-    }
 }
 
 

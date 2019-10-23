@@ -45,7 +45,22 @@ const WebMap = () => {
     return (
         <>
             <MapHeader />
+            {/* <Sidebar
+                textDirections={state.textDirections}
+                toggle={toggle}
+                walmartSelected={state.walmartSelected}
+                campsiteSelected={state.campsiteSelected}
+                pointOfInterestDistance={state.pointOfInterestDistance}
+                loading={state.loading}
+                routeChangeHandler={routeChangeHandler}
+                onChangeHandler={onChangeHandler}
+                start={state.start}
+                end={state.end}
+                toggleSidebar={toggleSidebar} 
+                sidebarOpen={state.sidebarOpen} 
+                /> */}
             <div className = "webmap" ref = { mapRef }/>
+            
         </>
         
     )
