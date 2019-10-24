@@ -6,11 +6,13 @@ import { getVehicles } from "../../store/actions";
 import { withRouter } from 'react-router-dom';
 import { connect } from "react-redux";
 import Button from 'react-bootstrap/Button';
+import { loadModules } from 'esri-loader';
 
 import "./Map.css"
 class MapPage extends Component {
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
+    this.mapRef = React.createRef()
     this.state = {
       start: '',
       end: '',
@@ -31,8 +33,28 @@ class MapPage extends Component {
   }
   
   componentDidMount() {
+    loadModules(['esri/Map', 'esri/views/MapView'], { css: true })
+    .then(([ArcGISMap, MapView]) => {
+      const map = new ArcGISMap({
+        basemap: 'streets-navigation-vector'
+      });
+
+      this.view = new MapView({
+        container: this.mapRef.current,
+        map: map,
+        center: [-118, 34],
+        zoom: 8
+      });
+    });
     this.renderMap()
     this.props.getVehicles()
+  }
+
+  componentWillUnmount() {
+    if (this.view) {
+      // destroy the map view
+      this.view.container = null;
+    }
   }
 
   toggleSidebar = () => {
@@ -462,7 +484,8 @@ class MapPage extends Component {
           start={this.state.start}
           end={this.state.end}
           toggleSidebar={this.toggleSidebar} sidebarOpen={this.state.sidebarOpen} />
-        <div id="map" ></div>
+        {/* <div id="map" ></div> */}
+        <div className="webmap" ref={this.mapRef} />
       </div>
     );
   }
