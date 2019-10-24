@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { loadModules } from 'esri-loader';
 import Sidebar from '../sidebar/Sidebar';
 import axios from 'axios';
 import { NavLink } from 'react-router-dom';
@@ -8,8 +9,9 @@ import { connect } from "react-redux";
 import Button from 'react-bootstrap/Button';
 
 import "./Map.css"
-const MapPage = (props) => {
+const DoNotUseMap = (props) => {
     const firstUpdate = useRef(true)
+    const mapRef = useRef();
     const [state, setState] = useState({
       start: '',
       end: '',
@@ -57,6 +59,36 @@ const MapPage = (props) => {
     setState({...state, loading: "checking initial route"});
     routeBeforeBarriers();
   }, [state.endCoord])
+
+  useEffect(
+    () => {
+        // lazy load the required ArcGIS API for JavaScript modules and CSS
+        loadModules(['esri/Map', 'esri/views/MapView', 'esri/widgets/Search'], { css: true })
+            .then(([ArcGISMap, MapView, Search]) => {
+                const map = new ArcGISMap({
+                    basemap: 'streets-navigation-vector'
+                });
+
+                // load the map view at the ref's DOM node
+                const view = new MapView({
+                    container: mapRef.current,
+                    map: map,
+                    center: [-118, 34],
+                    zoom: 8
+                });
+
+                const search = new Search({ view })
+                view.ui.add(search, 'top-right')
+
+                return () => {
+                    if (view) {
+                        // destroy the map view
+                        view.container = null;
+                    }
+                };
+            });
+    }
+);
   
   // useEffect(() => {
   //   // if(firstUpdate.current){
@@ -495,7 +527,8 @@ const MapPage = (props) => {
           start={state.start}
           end={state.end}
           toggleSidebar={toggleSidebar} sidebarOpen={state.sidebarOpen} />
-        <div id="map" ></div>
+        {/* <div id="map" ></div> */}
+        <div className = "webmap" ref = { mapRef }/>
       </div>
     );
  }
@@ -518,4 +551,4 @@ const mapStateToProps = state => ({
 
 export default withRouter(connect(
   mapStateToProps, { getVehicles }
-)(MapPage))
+)(DoNotUseMap))
