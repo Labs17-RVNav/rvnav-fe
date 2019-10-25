@@ -11,7 +11,7 @@ const Sidebar = (props) => {
         routing: "on",   
         vehicles: "off" 
     })
-    console.log('props on Sidebar', props)
+    // console.log('props on Sidebar', props)
 
 
     const closeVehicleForm = () => setState({...state, vehicleForm: "off", vehicles: "on"})
