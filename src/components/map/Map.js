@@ -7,9 +7,9 @@ import { withRouter } from 'react-router-dom';
 import { connect } from "react-redux";
 import Button from 'react-bootstrap/Button';
 import { loadModules } from 'esri-loader';
-// import widgets from '../widgets/widgets'
-
 import "./Map.css"
+import MapHeader from '../header/MapHeader';
+
 class MapPage extends Component {
   constructor(props) {
     super(props)
@@ -34,13 +34,12 @@ class MapPage extends Component {
   }
 
   componentDidMount() {
-    // widgets() <-- Tried to be used on a separate file component
     loadModules([
       'esri/Map', 
       'esri/views/MapView', 
-      'esri/widgets/Search'
+      'esri/widgets/Track'
     ], { css: true })
-    .then(([ArcGISMap, MapView, Search]) => {
+    .then(([ArcGISMap, MapView, Track]) => {
       const map = new ArcGISMap({
         basemap: 'streets-navigation-vector'
       });
@@ -48,15 +47,19 @@ class MapPage extends Component {
       const view = new MapView({
         container: this.mapRef.current,
         map: map,
-        center: [-118, 34],
-        zoom: 8
       });
 
-      const search = new Search({ view })
-      view.ui.add(search, 'top-right')
+      var track = new Track({
+        view: view
+      });
+      view.ui.add(track, "top-left");
+
+      view.when(function(){
+        track.start();
+      })
+
 
     });
-    // this.renderMap()
     this.props.getVehicles()
   }
 
@@ -76,59 +79,12 @@ class MapPage extends Component {
     this.setState({ sidebarOpen: !this.state.sidebarOpen })
   }
 
-  //this function displays the map initially when the app is opened, is called when the component mounts
-  //loads a script and calls initmap
-  // renderMap = () => {
-  //   loadScript(`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_KEY}&callback=initMap`)
-  //   window.initMap = this.initMap
-  // }
-  //called by initmap to display the initial map when the app is open
-  // initMap = () => {
-  //   var directionsService = new window.google.maps.DirectionsService();
-  //   var directionsDisplay = new window.google.maps.DirectionsRenderer();
-   
-  //   var map = new window.google.maps.Map(document.getElementById('map'), {
-  //     center: { lat: 34.0522, lng: -118.2437},
-  //     zoom: 12
-  //   });
-    
-    
-  //   this.setState({
-  //     directionsService,
-  //     directionsDisplay
-  //   })
-  //   directionsDisplay.setMap(map)
-  //   if (navigator.geolocation) {
-  //     navigator.geolocation.getCurrentPosition(function (position) {
-  //       var pos = {
-  //         lat: position.coords.latitude,
-  //         lng: position.coords.longitude
-  //       };
-  //       //marker for users location
-  //       new window.google.maps.Marker({ map: map, position: pos });
-  //       //new window.google.maps.Marker({map:map, position: mart});
-  //       map.setCenter(pos);
-  //     });
-  //   } else {
-  //     // Browser doesn't support Geolocation
-  //     console.log("Error finding location")
-  //   }
-  //   // this.onChangeHandler(e);
-  //   document.querySelector('form').addEventListener('submit', this.onChangeHandler)
-   
-  // }
-
-   //selects the map from google maps and puts it on the components state
+   //selects the map from API and puts it on the components state
    setMapToState = () => {
-    // var map = new window.google.maps.Map(document.getElementById('map'), {
-    //   center: {lat: parseFloat(this.state.startCoord && this.state.startCoord.geometry.y.toFixed(4)), lng: parseFloat(this.state.startCoord && this.state.startCoord.geometry.x.toFixed(4)) },
-    //   zoom: 10
-    // });
     var map = document.getElementsByClassName('WebMap')
     this.setState({
       map: map
     })
-    console.log('setMapToState', map)
   }
   
   //stores the changes as someone types in the start and end boxes on the routing form
@@ -143,10 +99,7 @@ class MapPage extends Component {
   //calls the geocode() function for start and end, triggers a series of functions/api calls
   onChangeHandler = (e) => { 
     this.setState({loading: "searching addresses"})
-    // e.preventDefault()
-    //this.setState({polygonsArray: []})
     this.geocode(this.state.start, "startCoord");
-    //this.geocode(this.state.end, "endCoord");
   }
 
   //calls ArcGIS geocode API, converts the address entered in the route form to gps coordinates
@@ -209,7 +162,6 @@ class MapPage extends Component {
     }
     axios.post("https://route.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World/solve", formData, config)
       .then(res => {
-        console.log('routeBeforeBarriers' ,res)
         if(res){
         let resLength = res.data.routes.features[0].geometry.paths[0].length;
         let startCoordinate = { lat: null, lng: null }; //the first coordinate sent to the clearance api
@@ -289,7 +241,6 @@ class MapPage extends Component {
           }
           //if we have made the final call to this api, as checked using values from the previous function, then we call the init route function
           if(i === lastStartPoint){
-            console.log("init conditional")
             this.setState(
               {
                 ...this.state.polygonsArray,
@@ -308,16 +259,12 @@ class MapPage extends Component {
   }
   
   //makes call to the routing API with barriers included
-  //displays route to google maps
+  //displays route to API
   //calls pointsOfInterest()
   initRoute = () => {  
     this.setMapToState();
     this.setState({loading: "making final route"})
-    console.log("length for markers loop", this.state.polygonsArray.length);
 
-
-    console.log("start COORD", this.state.startCoord);
-    console.log("end COORD", this.state.endCoord);
     var formData = new FormData();
     formData.append('f', 'json');
     formData.append('token', process.env.REACT_APP_ARC_KEY);
@@ -349,7 +296,6 @@ class MapPage extends Component {
     }
     axios.post("https://route.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World/solve", formData, config)
       .then(res => {
-        console.log('INIT ROUTE' ,res)
         this.setState({Coordinates: []})
        for (let i = 0; i < res.data.routes.features[0].geometry.paths[0].length; i++) {
           let lng = res.data.routes.features[0].geometry.paths[0][i][0];
@@ -363,16 +309,11 @@ class MapPage extends Component {
             Coordinates: [...this.state.Coordinates, Coordinate]
           }) 
         }
-        console.log('*******NEW COORDINATES', this.state.Coordinates)
-
-        console.log("coords array after loop (w/barriers)", this.state.Coordinates);
         let directionsResArr = res.data.directions[0].features;
-        console.log("directions res arr", directionsResArr)
         let newDirectionsArray = [];
         for(let i = 0; i < directionsResArr.length; i++){
            newDirectionsArray.push (directionsResArr[i].attributes.text);
         }
-        console.log('directions array', newDirectionsArray);
         this.setState({textDirections: newDirectionsArray})
 
         //NOTE: the following loop will display markes for all the low clearance trianges on the map
@@ -396,20 +337,13 @@ class MapPage extends Component {
     
         this.pointsOfInterest();
 
-        // var polyPath = new window.google.maps.Polyline({ //<---GOOGLE MAPS POLYLINE
-        //   path: this.state.Coordinates,
-        //   geodesic: true,
-        //   strokeColor: '#FF0000',
-        //   strokeOpacity: 1.0,
-        //   strokeWeight: 4
-        // });
-
         loadModules([
           'esri/Map', 
           'esri/views/MapView', 
           "esri/Graphic",
-          "esri/layers/GraphicsLayer"
-        ]).then(([ArcGISMap, MapView, Graphic, GraphicsLayer]) => {
+          "esri/layers/GraphicsLayer",
+          "esri/widgets/Track"
+        ]).then(([ArcGISMap, MapView, Graphic, GraphicsLayer, Track]) => {
 
           const map = new ArcGISMap({
             basemap: 'streets-navigation-vector'
@@ -443,8 +377,11 @@ class MapPage extends Component {
 
           graphicsLayer.add(polylineGraphic)
 
-          //  let test = polyPath.addPath( this.state.Coordinates )
-          // console.log('POLYPATH', test)
+          var track = new Track({
+            view: view
+          });
+          view.ui.add(track, "top-left");
+
           this.setState({loading: "routing successful"})
         })
       })
@@ -452,14 +389,11 @@ class MapPage extends Component {
         this.setState({loading: "problem making final route, please try again"})
         console.log("arc route err:", err);
       })
-
-      
   }
 
   //checks if any points of interest have been checked off
   //if yes, calls pointOfInterest() and passes in the relevant information
   pointsOfInterest = () => {
-    console.log("POI STATE ENDPOINT", this.state.endCoord);
     if(this.state.walmartSelected === true){
       this.pointOfInterestAPI("walmart", "lightblue");
     }
@@ -511,25 +445,15 @@ class MapPage extends Component {
       event_category: "points of interest",
       event_label: "checking points of interest"
     });
-    console.log(stateKey)
     this.setState({
       [stateKey]: !this.state[stateKey]
     })
-    console.log(this.state[stateKey])
   }
 
   render() {
     return (
       <div>
-        {/* <Nav /> */}
-        <div className="open-button-wrap">
-          <i className="fas fa-arrow-circle-right" onClick={this.toggleSidebar}   ></i>
-          
-          <NavLink  to="/">
-          <Button className="logout-btn"variant="warning">{localStorage.token ? `Log Out` : `Login / Signup`}</Button>
-          </NavLink>
-          
-        </div>
+        <MapHeader />
         <Sidebar
           textDirections={this.state.textDirections}
           toggle={this.toggle}
@@ -542,22 +466,11 @@ class MapPage extends Component {
           start={this.state.start}
           end={this.state.end}
           toggleSidebar={this.toggleSidebar} sidebarOpen={this.state.sidebarOpen} />
-        {/* <div id="map" ></div> */}
         <div className="webmap" ref={this.mapRef} />
       </div>
     );
   }
 }
-
-//google maps script
-// function loadScript(url) {
-//   var index = window.document.getElementsByTagName("script")[0]
-//   var script = window.document.createElement("script")
-//   script.src = url
-//   script.async = true
-//   script.defer = true
-//   index.parentNode.insertBefore(script, index)
-// }
 
 const mapStateToProps = state => ({
   vehicles: state.vehicles,
