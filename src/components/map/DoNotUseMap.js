@@ -567,7 +567,7 @@ const DoNotUseMap = (props) => {
     return (
       <div>
         {/* <Nav /> */} 
-        <div className="open-button-wrap">
+        {/* <div className="open-button-wrap">
           <i className="fas fa-arrow-circle-right" onClick={toggleSidebar}   ></i>
           
           <NavLink  to="/">
@@ -577,7 +577,7 @@ const DoNotUseMap = (props) => {
             </Button>
           </NavLink>
           
-        </div>
+        </div> */}
         <Sidebar
           textDirections={state.textDirections}
           toggle={toggle}

@@ -6,20 +6,43 @@
 
 .form-group{
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   margin-right: 16px;
 }
 .form-section{
   display: flex;
-  justify-content: flex-start;
+  justify-content: flex;
 }
 .vehicle-spec{
-  font-size: 1.2rem;
+  /* font-size: 1.2rem;
   margin-top: 4px;
-  margin-bottom: 1px;
+  margin-bottom: 1px; */
+  /* Name (required) */
+
+
+/* position: absolute; */
+left: 3.19%;
+right: 82.08%;
+top: 20.21%;
+bottom: 77.73%;
+padding-top: 5%;
+
+/* H4 Mobile / Helvetica Regular 18 */
+
+font-family: Helvetica;
+font-size: 18px;
+line-height: 21px;
+/* identical to box height */
+
+display: flex;
+align-items: center;
+
+/* White text */
+
+color: rgba(237, 238, 241, 0.95);
 }
 .plus{
-  margin-top: 34px;
+  margin-top: 4px;
   margin-right: 16px;
   font-size: 1.3rem;
 }
@@ -77,4 +100,11 @@ align-items: center;
 
 color: rgba(237, 238, 241, 0.95);
 border-bottom: 1px solid dodgerblue;
+}
+.measurements{
+  display:flex;
+  flex-direction:column;
+}
+.measurement-parent{
+
 }

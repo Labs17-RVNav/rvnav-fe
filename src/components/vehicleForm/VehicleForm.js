@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { withRouter } from 'react-router-dom';
 import { connect } from "react-redux";
 import { addVehicle, updateVehicle } from "../../store/actions";
@@ -190,29 +189,31 @@ class VehicleForm extends React.Component {
   render(){
     // console.log("form props", this.props)
     return(
+     
       <div>
-        
-      <Form className="vehicle-form" onSubmit={this.vehicleSubmit}>
-        <Form.Label id= 'vehicleAddTitle'>Add a Vehicle</Form.Label>
+         <nav className='wigetNav'>
+          <h3>RVWAY</h3>
+        </nav>
+      <div className="vehicle-form" onSubmit={this.vehicleSubmit}>
+        <h3 id= 'vehicleAddTitle'>Add a Vehicle</h3>
         <br></br>
-      <Form.Label className="vehicle-spec">Name</Form.Label>
-      <Form.Group>
-        <Form.Label>(required)</Form.Label>
-          <Form.Control        
+      <h4 className="vehicle-spec">Name (required)</h4>
+      <div className='measurements'>
+          <div        
             type="string"
             required
             name='name'
             placeholder="The Mystery Machine"
             value={this.state.specifications.name}
             onChange={this.handleText}
-            >
-        </Form.Control>
-        </Form.Group>
-      <p className="vehicle-spec">Height</p>
-        <div className="form-section">  
-        <Form.Group>
-        <Form.Label>Feet</Form.Label>
-          <Form.Control        
+          >
+          </div>
+      </div>
+      <h4 className="vehicle-spec">Height</h4>
+      <div className="form-section">  
+        <div className='measurements'>
+          <Form.Label>Feet</Form.Label>
+          <input        
             type="number"
             min="0"
             max="100"
@@ -220,33 +221,32 @@ class VehicleForm extends React.Component {
             placeholder="0"
             value={this.state.specifications.heightFeet}
             onChange={this.handleChange}
-            >
-        </Form.Control>
-        </Form.Group>
+          >
+          </input>
+        </div>
         <p className="plus">+</p>
-        <Form.Group>
-        <Form.Label>Inches</Form.Label>
-          <Form.Control        
+        <div className="measurements">
+          <p>Inches</p>
+          <input        
             type="number"
             min="0"
             max="11"
             name='heightInches'
             placeholder="0"
-            
             // this.state.specifications.heighInches === 0 ? undefined :
             value={ this.state.specifications.heightInches}
             onChange={this.handleChange}
-            >
-        </Form.Control>
-        </Form.Group>
+          >
+        </input>
         </div>
+      </div>
 
 
-        <p className="vehicle-spec">Width</p>
+        <h4 className="vehicle-spec">Width</h4>
         <div className="form-section">
-        <Form.Group>
+        <div className="measurements">
           <Form.Label>Feet</Form.Label>
-          <Form.Control        
+          <input        
             type="number"
             min="0"
             max="100"
@@ -255,12 +255,12 @@ class VehicleForm extends React.Component {
             value={this.state.specifications.widthFeet}
             onChange={this.handleChange}
             >
-        </Form.Control>
-        </Form.Group>
+        </input>
+        </div>
         <p className="plus">+</p>
-        <Form.Group>
+        <div className="measurements">
         <Form.Label>Inches</Form.Label>
-          <Form.Control        
+          <input        
             type="number"
             min="0"
             max="11"
@@ -269,16 +269,16 @@ class VehicleForm extends React.Component {
             value={this.state.specifications.widthInches}
             onChange={this.handleChange}
             >
-        </Form.Control>
-        </Form.Group>
+        </input>
+        </div>
         </div>
 
 
-        <p className="vehicle-spec">Length</p>
+        <h4 className="vehicle-spec">Length</h4>
         <div className="form-section">
-        <Form.Group>
+        <div>
           <Form.Label>Feet</Form.Label>
-          <Form.Control        
+          <input        
             type="number"
             min="0"
             max="100"
@@ -287,12 +287,12 @@ class VehicleForm extends React.Component {
             value={this.state.specifications.lengthFeet}
             onChange={this.handleChange}
             >
-        </Form.Control>
-        </Form.Group>
+        </input>
+        </div>
         <p className="plus">+</p>
-        <Form.Group>
+        <div>
         <Form.Label>Inches</Form.Label>
-          <Form.Control        
+          <input        
             type="number"
             min="0"
             max="11"
@@ -301,16 +301,16 @@ class VehicleForm extends React.Component {
             value={this.state.specifications.lengthInches}
             onChange={this.handleChange}
             >
-        </Form.Control>
-        </Form.Group>
+        </input>
+        </div>
         </div>
 
 
-        <p className="vehicle-spec">Weight</p>
+        <h4 className="vehicle-spec">Weight</h4>
         <div className="form-section">
-        <Form.Group>
+        <div>
           <Form.Label>Pounds</Form.Label>
-          <Form.Control        
+          <input        
             type="number"
             min="0"
             max="99000"
@@ -319,14 +319,14 @@ class VehicleForm extends React.Component {
             value={this.state.specifications.weight}
             onChange={this.handleChange}
             >
-        </Form.Control>
-        </Form.Group>
+        </input>
         </div>
-        <p className="vehicle-spec">Axel Count</p>
+        </div>
+        <h4 className="vehicle-spec">Axel Count</h4>
         <div className="form-section">
-        <Form.Group>
+        <div>
           <Form.Label>Axels</Form.Label>
-          <Form.Control        
+          <input        
             type="number"
             min="0"
             max="10"
@@ -335,13 +335,13 @@ class VehicleForm extends React.Component {
             value={this.state.specifications.axel_count}
             onChange={this.handleChange}
             >
-        </Form.Control>
-        </Form.Group>
+        </input>
+        </div>
         </div>
 
 
         <p className="vehicle-spec">Class</p>
-      <Form.Group className="class-radios">
+      <div className="class-radios">
       <Form.Check name="class"inline label="A" type="radio" id={`inline-text-1`} 
       value="A"
       checked={this.state.specifications.class_name === "A"} onChange={this.handleRadio}
@@ -359,7 +359,7 @@ class VehicleForm extends React.Component {
             checked={this.state.specifications.class_name === "Trailer"}
             onChange={this.handleRadio}
       id={`inline-text-2`} /> */}
-      </Form.Group>
+      </div>
       <a target="_blank" rel="noopener noreferrer" href="https://rvs.autotrader.com/articles/buying-a-recreational-vehicle-rv-classes-explained">What class of vehicle do I have?</a>
 
       <p className="vehicle-spec">Tires</p>
@@ -373,7 +373,7 @@ class VehicleForm extends React.Component {
       />
 
       <Button type="submit" variant="warning" onClick={this.vehicleSubmit}>Submit</Button>
-        </Form>
+        </div>
 
       </div>
     )
