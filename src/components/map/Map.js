@@ -378,17 +378,17 @@ class MapPage extends Component {
 
           let startMarkerSymbol = {
             type: "simple-marker",
-            color: [226, 119, 40],  // orange
+            color: "dodgerblue",  
             outline: {
               color: [255, 255, 255], // white
-              width: 6
+              width: 1
             }
           };
 
           
           let endMarkerSymbol = {
             type: "simple-marker",
-            color: "green",  // orange
+            color: "green",  
             outline: {
               color: [255, 255, 255], // white
               width: 1
