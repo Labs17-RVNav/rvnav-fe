@@ -7,7 +7,7 @@ import { withRouter } from 'react-router-dom';
 import { connect } from "react-redux";
 import Button from 'react-bootstrap/Button';
 import { loadModules } from 'esri-loader';
-// import widgets from '../widgets/widgets'
+import MapHeader from '../header/MapHeader'
 
 import "./Map.css"
 class MapPage extends Component {
@@ -34,13 +34,12 @@ class MapPage extends Component {
   }
 
   componentDidMount() {
-    // widgets() <-- Tried to be used on a separate file component
+
     loadModules([
       'esri/Map', 
       'esri/views/MapView', 
-      'esri/widgets/Search'
     ], { css: true })
-    .then(([ArcGISMap, MapView, Search]) => {
+    .then(([ArcGISMap, MapView]) => {
       const map = new ArcGISMap({
         basemap: 'streets-navigation-vector'
       });
@@ -52,11 +51,7 @@ class MapPage extends Component {
         zoom: 8
       });
 
-      const search = new Search({ view })
-      view.ui.add(search, 'top-right')
-
     });
-    // this.renderMap()
     this.props.getVehicles()
   }
 
@@ -76,6 +71,7 @@ class MapPage extends Component {
     this.setState({ sidebarOpen: !this.state.sidebarOpen })
   }
 
+  //*******this needs to deleted 
   //this function displays the map initially when the app is opened, is called when the component mounts
   //loads a script and calls initmap
   // renderMap = () => {
@@ -118,6 +114,7 @@ class MapPage extends Component {
    
   // }
 
+    //********will most likely be deleting this */
    //selects the map from google maps and puts it on the components state
    setMapToState = () => {
     // var map = new window.google.maps.Map(document.getElementById('map'), {
@@ -395,7 +392,8 @@ class MapPage extends Component {
         // }
     
         this.pointsOfInterest();
-
+        
+        //****need to be deleted */
         // var polyPath = new window.google.maps.Polyline({ //<---GOOGLE MAPS POLYLINE
         //   path: this.state.Coordinates,
         //   geodesic: true,
@@ -443,8 +441,6 @@ class MapPage extends Component {
 
           graphicsLayer.add(polylineGraphic)
 
-          //  let test = polyPath.addPath( this.state.Coordinates )
-          // console.log('POLYPATH', test)
           this.setState({loading: "routing successful"})
         })
       })
@@ -456,6 +452,7 @@ class MapPage extends Component {
       
   }
 
+  ///******we should probably comment this out if we are not going to use points of interest */
   //checks if any points of interest have been checked off
   //if yes, calls pointOfInterest() and passes in the relevant information
   pointsOfInterest = () => {
@@ -486,6 +483,7 @@ class MapPage extends Component {
       "distance": parseInt(this.state.pointOfInterestDistance)
     }
   
+
     axios.post(`https://dr7ajalnlvq7c.cloudfront.net/fetch_${type}`, post)
       .then(res => {
         if(res){
@@ -521,15 +519,7 @@ class MapPage extends Component {
   render() {
     return (
       <div>
-        {/* <Nav /> */}
-        <div className="open-button-wrap">
-          <i className="fas fa-arrow-circle-right" onClick={this.toggleSidebar}   ></i>
-          
-          <NavLink  to="/">
-          <Button className="logout-btn"variant="warning">{localStorage.token ? `Log Out` : `Login / Signup`}</Button>
-          </NavLink>
-          
-        </div>
+        <MapHeader />
         <Sidebar
           textDirections={this.state.textDirections}
           toggle={this.toggle}
@@ -542,13 +532,13 @@ class MapPage extends Component {
           start={this.state.start}
           end={this.state.end}
           toggleSidebar={this.toggleSidebar} sidebarOpen={this.state.sidebarOpen} />
-        {/* <div id="map" ></div> */}
         <div className="webmap" ref={this.mapRef} />
       </div>
     );
   }
 }
 
+//***delete this piece */
 //google maps script
 // function loadScript(url) {
 //   var index = window.document.getElementsByTagName("script")[0]
