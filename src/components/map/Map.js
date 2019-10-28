@@ -7,6 +7,7 @@ import { withRouter } from 'react-router-dom';
 import { connect } from "react-redux";
 import Button from 'react-bootstrap/Button';
 import { loadModules } from 'esri-loader';
+// import widgets from '../widgets/widgets'
 
 import "./Map.css"
 class MapPage extends Component {
@@ -28,34 +29,34 @@ class MapPage extends Component {
       walmartSelected: false,
       campsiteSelected: false, 
       pointOfInterestDistance: 5, 
-      textDirections: []
+      textDirections: [],
     }
   }
-  
+
   componentDidMount() {
-    loadModules(['esri/Map', 'esri/views/MapView', "esri/widgets/Directions"], { css: true })
-    .then(([ArcGISMap, MapView, Directions]) => {
+    // widgets() <-- Tried to be used on a separate file component
+    loadModules([
+      'esri/Map', 
+      'esri/views/MapView', 
+      'esri/widgets/Search'
+    ], { css: true })
+    .then(([ArcGISMap, MapView, Search]) => {
       const map = new ArcGISMap({
         basemap: 'streets-navigation-vector'
       });
 
-      this.view = new MapView({
+      const view = new MapView({
         container: this.mapRef.current,
         map: map,
         center: [-118, 34],
         zoom: 8
       });
 
-      var directions = new Directions({
-        view: this.view,
-        routeServiceUrl: "https://utility.arcgis.com/usrsvcs/appservices/wcIszcOR3cVpgNpF/rest/services/World/Route/NAServer/Route_World"
-
-      });
-      this.view.ui.add(directions, "top-right");
-
+      const search = new Search({ view })
+      view.ui.add(search, 'top-right')
 
     });
-    this.renderMap()
+    // this.renderMap()
     this.props.getVehicles()
   }
 
@@ -77,57 +78,58 @@ class MapPage extends Component {
 
   //this function displays the map initially when the app is opened, is called when the component mounts
   //loads a script and calls initmap
-  renderMap = () => {
-    loadScript(`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_KEY}&callback=initMap`)
-    window.initMap = this.initMap
-  }
+  // renderMap = () => {
+  //   loadScript(`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_KEY}&callback=initMap`)
+  //   window.initMap = this.initMap
+  // }
   //called by initmap to display the initial map when the app is open
-  initMap = () => {
-    var directionsService = new window.google.maps.DirectionsService();
-    var directionsDisplay = new window.google.maps.DirectionsRenderer();
+  // initMap = () => {
+  //   var directionsService = new window.google.maps.DirectionsService();
+  //   var directionsDisplay = new window.google.maps.DirectionsRenderer();
    
-    var map = new window.google.maps.Map(document.getElementById('map'), {
-      center: { lat: 34.0522, lng: -118.2437},
-      zoom: 12
-    });
+  //   var map = new window.google.maps.Map(document.getElementById('map'), {
+  //     center: { lat: 34.0522, lng: -118.2437},
+  //     zoom: 12
+  //   });
     
     
-    this.setState({
-      directionsService,
-      directionsDisplay
-    })
-    directionsDisplay.setMap(map)
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function (position) {
-        var pos = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude
-        };
-        //marker for users location
-        new window.google.maps.Marker({ map: map, position: pos });
-        //new window.google.maps.Marker({map:map, position: mart});
-        map.setCenter(pos);
-      });
-    } else {
-      // Browser doesn't support Geolocation
-      console.log("Error finding location")
-    }
-    // this.onChangeHandler(e);
-    document.querySelector('form').addEventListener('submit', this.onChangeHandler)
+  //   this.setState({
+  //     directionsService,
+  //     directionsDisplay
+  //   })
+  //   directionsDisplay.setMap(map)
+  //   if (navigator.geolocation) {
+  //     navigator.geolocation.getCurrentPosition(function (position) {
+  //       var pos = {
+  //         lat: position.coords.latitude,
+  //         lng: position.coords.longitude
+  //       };
+  //       //marker for users location
+  //       new window.google.maps.Marker({ map: map, position: pos });
+  //       //new window.google.maps.Marker({map:map, position: mart});
+  //       map.setCenter(pos);
+  //     });
+  //   } else {
+  //     // Browser doesn't support Geolocation
+  //     console.log("Error finding location")
+  //   }
+  //   // this.onChangeHandler(e);
+  //   document.querySelector('form').addEventListener('submit', this.onChangeHandler)
    
-  }
+  // }
 
    //selects the map from google maps and puts it on the components state
-   // commented out as this was for previous map API — obsolete
-  //  setMapToState = () => {
-  //   var map = new window.google.maps.Map(document.getElementById('map'), {
-  //     center: {lat: parseFloat(this.state.startCoord && this.state.startCoord.geometry.y.toFixed(4)), lng: parseFloat(this.state.startCoord && this.state.startCoord.geometry.x.toFixed(4)) },
-  //     zoom: 10
-  //   });
-  //   this.setState({
-  //     map: map
-  //   })
-  // }
+   setMapToState = () => {
+    // var map = new window.google.maps.Map(document.getElementById('map'), {
+    //   center: {lat: parseFloat(this.state.startCoord && this.state.startCoord.geometry.y.toFixed(4)), lng: parseFloat(this.state.startCoord && this.state.startCoord.geometry.x.toFixed(4)) },
+    //   zoom: 10
+    // });
+    var map = document.getElementsByClassName('WebMap')
+    this.setState({
+      map: map
+    })
+    console.log('setMapToState', map)
+  }
   
   //stores the changes as someone types in the start and end boxes on the routing form
   //basic text change handler
@@ -207,6 +209,7 @@ class MapPage extends Component {
     }
     axios.post("https://route.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World/solve", formData, config)
       .then(res => {
+        console.log('routeBeforeBarriers' ,res)
         if(res){
         let resLength = res.data.routes.features[0].geometry.paths[0].length;
         let startCoordinate = { lat: null, lng: null }; //the first coordinate sent to the clearance api
@@ -216,6 +219,7 @@ class MapPage extends Component {
         let lastStartPoint = resLength - (resLength % increment); //the value of i when the loop is on it's last run (ex. i = 1000 for an array of length 1200 with increments of 500)
         this.setState({loading: "checking clearance"}) //changes loading message displayed below routing form
         for (let i = 0; i < resLength; i=i+increment) {
+
           startCoordinate = { lat: res.data.routes.features[0].geometry.paths[0][i][1], lng: res.data.routes.features[0].geometry.paths[0][i][0]}
          
           //checks if we are at the last value of i in the loop and, if so, runs a special case checking the last part of the route 
@@ -231,6 +235,7 @@ class MapPage extends Component {
           this.clearanceAPI(startCoordinate, endCoordinate, polyArrayLocal, i, lastStartPoint);
           
         }
+
       }
       })
       .catch(err => {
@@ -344,19 +349,22 @@ class MapPage extends Component {
     }
     axios.post("https://route.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World/solve", formData, config)
       .then(res => {
+        console.log('INIT ROUTE' ,res)
         this.setState({Coordinates: []})
        for (let i = 0; i < res.data.routes.features[0].geometry.paths[0].length; i++) {
           let lng = res.data.routes.features[0].geometry.paths[0][i][0];
           let lat = res.data.routes.features[0].geometry.paths[0][i][1];
           parseFloat(lat);
           parseFloat(lng);
-          let Coordinate = { lat: null, lng: null }
-          Coordinate.lat = lat;
-          Coordinate.lng = lng;
+          let Coordinate = [ null, null ]
+          Coordinate[1] = lat;
+          Coordinate[0] = lng;
           this.setState({
             Coordinates: [...this.state.Coordinates, Coordinate]
           }) 
         }
+        console.log('*******NEW COORDINATES', this.state.Coordinates)
+
         console.log("coords array after loop (w/barriers)", this.state.Coordinates);
         let directionsResArr = res.data.directions[0].features;
         console.log("directions res arr", directionsResArr)
@@ -388,24 +396,57 @@ class MapPage extends Component {
     
         this.pointsOfInterest();
 
-        var polyPath = new window.google.maps.Polyline({
-          path: this.state.Coordinates,
-          geodesic: true,
-          strokeColor: '#FF0000',
-          strokeOpacity: 1.0,
-          strokeWeight: 4
-        });
-
-        // var line = new Polyline({
-        //   hasZ: false,
-        //   hasM: true,
-        //   paths: paths,
-        //   spatialReference: { wkid: 4326 }
+        // var polyPath = new window.google.maps.Polyline({ //<---GOOGLE MAPS POLYLINE
+        //   path: this.state.Coordinates,
+        //   geodesic: true,
+        //   strokeColor: '#FF0000',
+        //   strokeOpacity: 1.0,
+        //   strokeWeight: 4
         // });
 
-        polyPath.setMap(this.state.map);
+        loadModules([
+          'esri/Map', 
+          'esri/views/MapView', 
+          "esri/Graphic",
+          "esri/layers/GraphicsLayer"
+        ]).then(([ArcGISMap, MapView, Graphic, GraphicsLayer]) => {
 
-        this.setState({loading: "routing successful"})
+          const map = new ArcGISMap({
+            basemap: 'streets-navigation-vector'
+          });
+
+          const graphicsLayer = new GraphicsLayer();
+          map.add(graphicsLayer);
+    
+          const view = new MapView({
+            container: this.mapRef.current,
+            map: map,
+            center: this.state.Coordinates[0],
+            zoom: 15
+          });
+
+          var polyline = ({
+            type: "polyline",
+            paths: this.state.Coordinates
+          });
+
+          var simpleLineSymbol = {
+            type: "simple-line",
+            color: [102, 157, 246], // orange
+            width: 2
+          };
+
+          var polylineGraphic = new Graphic({
+            geometry: polyline,
+            symbol: simpleLineSymbol
+          })
+
+          graphicsLayer.add(polylineGraphic)
+
+          //  let test = polyPath.addPath( this.state.Coordinates )
+          // console.log('POLYPATH', test)
+          this.setState({loading: "routing successful"})
+        })
       })
       .catch(err => {
         this.setState({loading: "problem making final route, please try again"})
@@ -509,14 +550,14 @@ class MapPage extends Component {
 }
 
 //google maps script
-function loadScript(url) {
-  var index = window.document.getElementsByTagName("script")[0]
-  var script = window.document.createElement("script")
-  script.src = url
-  script.async = true
-  script.defer = true
-  index.parentNode.insertBefore(script, index)
-}
+// function loadScript(url) {
+//   var index = window.document.getElementsByTagName("script")[0]
+//   var script = window.document.createElement("script")
+//   script.src = url
+//   script.async = true
+//   script.defer = true
+//   index.parentNode.insertBefore(script, index)
+// }
 
 const mapStateToProps = state => ({
   vehicles: state.vehicles,
