@@ -111,7 +111,7 @@ class MapPage extends Component {
       if(res){
       this.setState({[coordinate]: {
         "geometry": {
-        "x": res.data.candidates[0].location.x, //xcorresponds to longitude
+        "x": res.data.candidates[0].location.x, //x corresponds to longitude
         "y": res.data.candidates[0].location.y, //y corresponds to latitude
         "spatialReference": {
           "wkid": res.data.spatialReference.wkid
@@ -207,7 +207,7 @@ class MapPage extends Component {
     //if height has been set for a vehicle, checks the height and assigns it as the value to be sent to the api
     if(this.props.vehicles.vehicles){
       this.props.vehicles.vehicles.map( e => {
-        //checks if a vehicla has been selected by the user
+        //checks if a vehicle has been selected by the user
         if(e.id === this.props.selected_id){
             heightOfSelectedVehicle = e.height;
         }
@@ -222,7 +222,7 @@ class MapPage extends Component {
       "end_lat": parseFloat(end.lat.toFixed(4))
     }
     //creates a triangle based on the points of low clearance sent from the low clearance api
-    //this is done because the routing api uses polygons to block the route from passing through certain areas, and the clearance api returns only one point so a traingle is created around that point
+    //this is done because the routing api uses polygons to block the route from passing through certain areas, and the clearance api returns only one point so a triangle is created around that point
     //any polygon shape can be sent to the routing api, triangles were chosen to avoid problems creating the points out of order (eg a square as an hourglass), and to reduce the number of points sent to the api, hopefully speeding it up
     let makePolygon = (latitude, longitude) => {
       let polygon = [];
@@ -359,25 +359,70 @@ class MapPage extends Component {
             zoom: 15
           });
 
-          var polyline = ({
+          let polyline = ({
             type: "polyline",
             paths: this.state.Coordinates
           });
 
-          var simpleLineSymbol = {
+          let startPoint = {
+            type: "point",
+            longitude: this.state.Coordinates[0][0],
+            latitude: this.state.Coordinates[0][1]
+          };
+
+          let endPoint = {
+            type: "point",
+            longitude: this.state.Coordinates[this.state.Coordinates.length-1][0],
+            latitude: this.state.Coordinates[this.state.Coordinates.length-1][1]
+          };
+
+          let startMarkerSymbol = {
+            type: "simple-marker",
+            color: "dodgerblue",  
+            outline: {
+              color: [255, 255, 255], // white
+              width: 1
+            }
+          };
+
+          
+          let endMarkerSymbol = {
+            type: "simple-marker",
+            color: "green",  
+            outline: {
+              color: [255, 255, 255], // white
+              width: 1
+            }
+          };
+   
+          let sPointGraphic = new Graphic({
+            geometry: startPoint,
+            symbol: startMarkerSymbol
+          });
+   
+          graphicsLayer.add(sPointGraphic);
+
+          let ePointGraphic = new Graphic({
+            geometry: endPoint,
+            symbol: endMarkerSymbol
+          });
+   
+          graphicsLayer.add(ePointGraphic);
+
+          let simpleLineSymbol = {
             type: "simple-line",
             color: [102, 157, 246], // orange
             width: 2
           };
 
-          var polylineGraphic = new Graphic({
+          let polylineGraphic = new Graphic({
             geometry: polyline,
             symbol: simpleLineSymbol
           })
 
           graphicsLayer.add(polylineGraphic)
 
-          var track = new Track({
+          let track = new Track({
             view: view
           });
           view.ui.add(track, "top-left");
@@ -391,6 +436,7 @@ class MapPage extends Component {
       })
   }
 
+  ///******we should probably comment this out if we are not going to use points of interest */
   //checks if any points of interest have been checked off
   //if yes, calls pointOfInterest() and passes in the relevant information
   pointsOfInterest = () => {
@@ -420,6 +466,7 @@ class MapPage extends Component {
       "distance": parseInt(this.state.pointOfInterestDistance)
     }
   
+
     axios.post(`https://dr7ajalnlvq7c.cloudfront.net/fetch_${type}`, post)
       .then(res => {
         if(res){
