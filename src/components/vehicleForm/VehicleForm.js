@@ -193,7 +193,9 @@ class VehicleForm extends React.Component {
       <div>
         
       <Form className="vehicle-form" onSubmit={this.vehicleSubmit}>
-      <p className="vehicle-spec">Name</p>
+        <Form.Label id= 'vehicleAddTitle'>Add a Vehicle</Form.Label>
+        <br></br>
+      <Form.Label className="vehicle-spec">Name</Form.Label>
       <Form.Group>
         <Form.Label>(required)</Form.Label>
           <Form.Control        

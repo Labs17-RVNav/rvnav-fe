@@ -34,8 +34,47 @@
   margin-bottom: 6px;
 }
 .vehicle-form{
-  margin-top: -10px;
+  /* margin-top: -10px;
   color: white;
   width: 100%;
-  background-color: #0f0f0f;
+  background-color: #0f0f0f; */
+  /* Rectangle 30 */
+
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+
+/* Grayscale 100% */
+
+background: #2A2E43;
+}
+
+#vehicleAddTitle{
+  /* ADD A VEHICLE */
+
+
+position: absolute;
+left: 0.04%;
+right: 0%;
+top: -12.5%;
+bottom: -18.75%;
+
+/* H3 Mobile/ Helvetica Bold 18 */
+
+font-family: Helvetica;
+font-size: 18px;
+line-height: 21px;
+/* identical to box height */
+
+display: flex;
+align-items: center;
+
+/* White text */
+
+color: rgba(237, 238, 241, 0.95);
+border-bottom: 1px solid dodgerblue;
 }
