@@ -359,25 +359,70 @@ class MapPage extends Component {
             zoom: 15
           });
 
-          var polyline = ({
+          let polyline = ({
             type: "polyline",
             paths: this.state.Coordinates
           });
 
-          var simpleLineSymbol = {
+          let startPoint = {
+            type: "point",
+            longitude: this.state.Coordinates[0][0],
+            latitude: this.state.Coordinates[0][1]
+          };
+
+          let endPoint = {
+            type: "point",
+            longitude: this.state.Coordinates[this.state.Coordinates.length-1][0],
+            latitude: this.state.Coordinates[this.state.Coordinates.length-1][1]
+          };
+
+          let startMarkerSymbol = {
+            type: "simple-marker",
+            color: [226, 119, 40],  // orange
+            outline: {
+              color: [255, 255, 255], // white
+              width: 6
+            }
+          };
+
+          
+          let endMarkerSymbol = {
+            type: "simple-marker",
+            color: "green",  // orange
+            outline: {
+              color: [255, 255, 255], // white
+              width: 1
+            }
+          };
+   
+          let sPointGraphic = new Graphic({
+            geometry: startPoint,
+            symbol: startMarkerSymbol
+          });
+   
+          graphicsLayer.add(sPointGraphic);
+
+          let ePointGraphic = new Graphic({
+            geometry: endPoint,
+            symbol: endMarkerSymbol
+          });
+   
+          graphicsLayer.add(ePointGraphic);
+
+          let simpleLineSymbol = {
             type: "simple-line",
             color: [102, 157, 246], // orange
             width: 2
           };
 
-          var polylineGraphic = new Graphic({
+          let polylineGraphic = new Graphic({
             geometry: polyline,
             symbol: simpleLineSymbol
           })
 
           graphicsLayer.add(polylineGraphic)
 
-          var track = new Track({
+          let track = new Track({
             view: view
           });
           view.ui.add(track, "top-left");
