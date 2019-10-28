@@ -33,8 +33,8 @@ class MapPage extends Component {
   }
   
   componentDidMount() {
-    loadModules(['esri/Map', 'esri/views/MapView'], { css: true })
-    .then(([ArcGISMap, MapView]) => {
+    loadModules(['esri/Map', 'esri/views/MapView', "esri/widgets/Directions"], { css: true })
+    .then(([ArcGISMap, MapView, Directions]) => {
       const map = new ArcGISMap({
         basemap: 'streets-navigation-vector'
       });
@@ -45,6 +45,15 @@ class MapPage extends Component {
         center: [-118, 34],
         zoom: 8
       });
+
+      var directions = new Directions({
+        view: this.view,
+        routeServiceUrl: "https://utility.arcgis.com/usrsvcs/appservices/wcIszcOR3cVpgNpF/rest/services/World/Route/NAServer/Route_World"
+
+      });
+      this.view.ui.add(directions, "top-right");
+
+
     });
     this.renderMap()
     this.props.getVehicles()
@@ -109,15 +118,16 @@ class MapPage extends Component {
   }
 
    //selects the map from google maps and puts it on the components state
-   setMapToState = () => {
-    var map = new window.google.maps.Map(document.getElementById('map'), {
-      center: {lat: parseFloat(this.state.startCoord && this.state.startCoord.geometry.y.toFixed(4)), lng: parseFloat(this.state.startCoord && this.state.startCoord.geometry.x.toFixed(4)) },
-      zoom: 10
-    });
-    this.setState({
-      map: map
-    })
-  }
+   // commented out as this was for previous map API — obsolete
+  //  setMapToState = () => {
+  //   var map = new window.google.maps.Map(document.getElementById('map'), {
+  //     center: {lat: parseFloat(this.state.startCoord && this.state.startCoord.geometry.y.toFixed(4)), lng: parseFloat(this.state.startCoord && this.state.startCoord.geometry.x.toFixed(4)) },
+  //     zoom: 10
+  //   });
+  //   this.setState({
+  //     map: map
+  //   })
+  // }
   
   //stores the changes as someone types in the start and end boxes on the routing form
   //basic text change handler
@@ -146,7 +156,7 @@ class MapPage extends Component {
       if(res){
       this.setState({[coordinate]: {
         "geometry": {
-        "x": res.data.candidates[0].location.x, //xcorresponds to longitude
+        "x": res.data.candidates[0].location.x, //x corresponds to longitude
         "y": res.data.candidates[0].location.y, //y corresponds to latitude
         "spatialReference": {
           "wkid": res.data.spatialReference.wkid
@@ -240,7 +250,7 @@ class MapPage extends Component {
     //if height has been set for a vehicle, checks the height and assigns it as the value to be sent to the api
     if(this.props.vehicles.vehicles){
       this.props.vehicles.vehicles.map( e => {
-        //checks if a vehicla has been selected by the user
+        //checks if a vehicle has been selected by the user
         if(e.id === this.props.selected_id){
             heightOfSelectedVehicle = e.height;
         }
@@ -255,7 +265,7 @@ class MapPage extends Component {
       "end_lat": parseFloat(end.lat.toFixed(4))
     }
     //creates a triangle based on the points of low clearance sent from the low clearance api
-    //this is done because the routing api uses polygons to block the route from passing through certain areas, and the clearance api returns only one point so a traingle is created around that point
+    //this is done because the routing api uses polygons to block the route from passing through certain areas, and the clearance api returns only one point so a triangle is created around that point
     //any polygon shape can be sent to the routing api, triangles were chosen to avoid problems creating the points out of order (eg a square as an hourglass), and to reduce the number of points sent to the api, hopefully speeding it up
     let makePolygon = (latitude, longitude) => {
       let polygon = [];
@@ -385,6 +395,13 @@ class MapPage extends Component {
           strokeOpacity: 1.0,
           strokeWeight: 4
         });
+
+        // var line = new Polyline({
+        //   hasZ: false,
+        //   hasM: true,
+        //   paths: paths,
+        //   spatialReference: { wkid: 4326 }
+        // });
 
         polyPath.setMap(this.state.map);
 
