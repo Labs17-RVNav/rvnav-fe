@@ -31,9 +31,9 @@ const Sidebar = (props) => {
         //console.log("sidebar props", props);
         return (
             <div id = 'overlayNav' className = {`overlay ${props.sidebarOpen ? 'open': 'close'}`}>
-                <div >
+                {/* <div >
                     <i className="fas fa-arrow-circle-left" onClick = {props.toggleSidebar}></i>
-                    </div>
+                    </div> */}
                 
                     <div className = 'overlay-content'>
                     

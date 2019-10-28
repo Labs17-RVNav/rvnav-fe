@@ -16,20 +16,22 @@ const MapHeader = () => {
       }
 
     return (
-        <div>
-        {/* <Nav /> */}
-        <div className="open-button-wrap">
-          <i className="fas fa-arrow-circle-right" onClick={toggleSidebar}   ></i>
+      <> </>
+        // <div>
+        // {/* <Nav /> */}
+        // <div className="open-button-wrap">
+        //   <i className="fas fa-arrow-circle-right" onClick={toggleSidebar}   ></i>
           
-          <NavLink  to="/">
-            <Button 
-              className="logout-btn"
-              variant="warning">{localStorage.token ? `Log Out` : `Login / Signup`}
-            </Button>
-          </NavLink>
+        //   <NavLink  to="/">
+        //     <Button 
+        //       className="logout-btn"
+        //       variant="warning">{localStorage.token ? `Log Out` : `Login / Signup`}
+        //     </Button>
+        //   </NavLink>
           
-        </div>
-        </div>
+        // </div>
+        // </div>
+       
     )
 }
 
