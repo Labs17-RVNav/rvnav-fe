@@ -29,7 +29,7 @@ class MapPage extends Component {
       walmartSelected: false,
       campsiteSelected: false,
       pointOfInterestDistance: 5,
-      textDirections: []
+      textDirections: [],
     }
   }
 
@@ -175,7 +175,7 @@ class MapPage extends Component {
 
             startCoordinate = { lat: res.data.routes.features[0].geometry.paths[0][i][1], lng: res.data.routes.features[0].geometry.paths[0][i][0] }
 
-            //checks if we are at the last value of i in the loop and, if so, runs a special case checking the last part of the route
+            //checks if we are at the last value of i in the loop and, if so, runs a special case checking the last part of the route 
             if (i === lastStartPoint) {
               //when at the last value of i, checks from that value to the final index
               endCoordinate = { lat: res.data.routes.features[0].geometry.paths[0][resLength - 1][1], lng: res.data.routes.features[0].geometry.paths[0][resLength - 1][0] }
@@ -183,6 +183,10 @@ class MapPage extends Component {
               //when not at the last value of i in the loop, that value to another value based on the increment
               endCoordinate = { lat: res.data.routes.features[0].geometry.paths[0][i + increment][1], lng: res.data.routes.features[0].geometry.paths[0][i + increment][0] }
             }
+            //function that call the clearance api
+            //startCoordinate and endCoordinate are sent to make the API call, polyArrayLocal stores the response from the api, i and last startPoint are used check when the loops is finished
+            this.clearanceAPI(startCoordinate, endCoordinate, polyArrayLocal, i, lastStartPoint);
+
           }
 
         }
@@ -463,6 +467,7 @@ class MapPage extends Component {
       "distance": parseInt(this.state.pointOfInterestDistance)
     }
 
+
     axios.post(`https://dr7ajalnlvq7c.cloudfront.net/fetch_${type}`, post)
       .then(res => {
         if (res) {
@@ -496,9 +501,21 @@ class MapPage extends Component {
   render() {
     return (
       <div>
-        end = {this.state.end}
+        <MapHeader />
+        <Sidebar
+          textDirections={this.state.textDirections}
+          toggle={this.toggle}
+          walmartSelected={this.state.walmartSelected}
+          campsiteSelected={this.state.campsiteSelected}
+          pointOfInterestDistance={this.state.pointOfInterestDistance}
+          loading={this.state.loading}
+          routeChangeHandler={this.routeChangeHandler}
+          onChangeHandler={this.onChangeHandler}
+          start={this.state.start}
+          end={this.state.end}
+          toggleSidebar={this.toggleSidebar} sidebarOpen={this.state.sidebarOpen} />
         <div className="webmap" ref={this.mapRef} />
-      </div >
+      </div>
     );
   }
 }
