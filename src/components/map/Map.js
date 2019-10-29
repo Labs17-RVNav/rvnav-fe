@@ -25,41 +25,41 @@ class MapPage extends Component {
       startCoord: "",
       endCoord: "",
       map: null,
-      loading: "", 
+      loading: "",
       walmartSelected: false,
-      campsiteSelected: false, 
-      pointOfInterestDistance: 5, 
+      campsiteSelected: false,
+      pointOfInterestDistance: 5,
       textDirections: [],
     }
   }
 
   componentDidMount() {
     loadModules([
-      'esri/Map', 
-      'esri/views/MapView', 
+      'esri/Map',
+      'esri/views/MapView',
       'esri/widgets/Track'
     ], { css: true })
-    .then(([ArcGISMap, MapView, Track]) => {
-      const map = new ArcGISMap({
-        basemap: 'streets-navigation-vector'
+      .then(([ArcGISMap, MapView, Track]) => {
+        const map = new ArcGISMap({
+          basemap: 'streets-navigation-vector'
+        });
+
+        const view = new MapView({
+          container: this.mapRef.current,
+          map: map,
+        });
+
+        var track = new Track({
+          view: view
+        });
+        view.ui.add(track, "top-left");
+
+        view.when(function () {
+          track.start();
+        })
+
+
       });
-
-      const view = new MapView({
-        container: this.mapRef.current,
-        map: map,
-      });
-
-      var track = new Track({
-        view: view
-      });
-      view.ui.add(track, "top-left");
-
-      view.when(function(){
-        track.start();
-      })
-
-
-    });
     this.props.getVehicles()
   }
 
@@ -79,14 +79,14 @@ class MapPage extends Component {
     this.setState({ sidebarOpen: !this.state.sidebarOpen })
   }
 
-   //selects the map from API and puts it on the components state
-   setMapToState = () => {
+  //selects the map from API and puts it on the components state
+  setMapToState = () => {
     var map = document.getElementsByClassName('WebMap')
     this.setState({
       map: map
     })
   }
-  
+
   //stores the changes as someone types in the start and end boxes on the routing form
   //basic text change handler
   routeChangeHandler = (e) => {
@@ -97,8 +97,8 @@ class MapPage extends Component {
 
   //this function is triggered when the route button is clicked
   //calls the geocode() function for start and end, triggers a series of functions/api calls
-  onChangeHandler = (e) => { 
-    this.setState({loading: "searching addresses"})
+  onChangeHandler = (e) => {
+    this.setState({ loading: "searching addresses" })
     this.geocode(this.state.start, "startCoord");
   }
 
@@ -106,45 +106,46 @@ class MapPage extends Component {
   //calls routeBeforeBarriers ()
   geocode = (address, coordinate) => {
     axios
-    .get(`https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?f=json&singleLine=${address}&outFields=Match_addr,Addr_type`)
-    .then(res => {
-      if(res){
-      this.setState({[coordinate]: {
-        "geometry": {
-        "x": res.data.candidates[0].location.x, //x corresponds to longitude
-        "y": res.data.candidates[0].location.y, //y corresponds to latitude
-        "spatialReference": {
-          "wkid": res.data.spatialReference.wkid
-        }
-      },
-      "attributes": {
-        "Name": res.data.candidates[0].address
-      }
-    }
-  }, 
-   () => {
-     if(coordinate === "startCoord"){
-      this.geocode(this.state.end, "endCoord");
-     }
-    else if(coordinate === "endCoord"){
-        this.setState({loading: "checking initial route"});
-        this.routeBeforeBarriers();
-      }
-   }
-  )
+      .get(`https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?f=json&singleLine=${address}&outFields=Match_addr,Addr_type`)
+      .then(res => {
+        if (res) {
+          this.setState({
+            [coordinate]: {
+              "geometry": {
+                "x": res.data.candidates[0].location.x, //x corresponds to longitude
+                "y": res.data.candidates[0].location.y, //y corresponds to latitude
+                "spatialReference": {
+                  "wkid": res.data.spatialReference.wkid
+                }
+              },
+              "attributes": {
+                "Name": res.data.candidates[0].address
+              }
+            }
+          },
+            () => {
+              if (coordinate === "startCoord") {
+                this.geocode(this.state.end, "endCoord");
+              }
+              else if (coordinate === "endCoord") {
+                this.setState({ loading: "checking initial route" });
+                this.routeBeforeBarriers();
+              }
+            }
+          )
 
-  }
-    })
-    .catch(err => {
-      console.log("gecode err", err)
-      this.setState({loading: "problem geocoding, please try again"});
-    })
+        }
+      })
+      .catch(err => {
+        console.log("gecode err", err)
+        this.setState({ loading: "problem geocoding, please try again" });
+      })
 
   }
 
   //calls arcGIS route API, makes route without barriers, loops along said route to check for low clearance
   //calls clearanceAPI() to check for barriers if height is > 0
-  routeBeforeBarriers= () => {
+  routeBeforeBarriers = () => {
     var formData = new FormData();
     formData.append('f', 'json');
     formData.append('token', process.env.REACT_APP_ARC_KEY);
@@ -162,37 +163,37 @@ class MapPage extends Component {
     }
     axios.post("https://route.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World/solve", formData, config)
       .then(res => {
-        if(res){
-        let resLength = res.data.routes.features[0].geometry.paths[0].length;
-        let startCoordinate = { lat: null, lng: null }; //the first coordinate sent to the clearance api
-        let endCoordinate = {lat: null, lng: null}; //the second coordinate sent to the clearance api
-        let increment = 500; //variable for breaking the route into chunks for the clearance api, call will be made every nth coordinate returned from ArcGIS
-        let polyArrayLocal = []; //stores barriers beofre they are set to state
-        let lastStartPoint = resLength - (resLength % increment); //the value of i when the loop is on it's last run (ex. i = 1000 for an array of length 1200 with increments of 500)
-        this.setState({loading: "checking clearance"}) //changes loading message displayed below routing form
-        for (let i = 0; i < resLength; i=i+increment) {
+        if (res) {
+          let resLength = res.data.routes.features[0].geometry.paths[0].length;
+          let startCoordinate = { lat: null, lng: null }; //the first coordinate sent to the clearance api
+          let endCoordinate = { lat: null, lng: null }; //the second coordinate sent to the clearance api
+          let increment = 500; //variable for breaking the route into chunks for the clearance api, call will be made every nth coordinate returned from ArcGIS
+          let polyArrayLocal = []; //stores barriers beofre they are set to state
+          let lastStartPoint = resLength - (resLength % increment); //the value of i when the loop is on it's last run (ex. i = 1000 for an array of length 1200 with increments of 500)
+          this.setState({ loading: "checking clearance" }) //changes loading message displayed below routing form
+          for (let i = 0; i < resLength; i = i + increment) {
 
-          startCoordinate = { lat: res.data.routes.features[0].geometry.paths[0][i][1], lng: res.data.routes.features[0].geometry.paths[0][i][0]}
-         
-          //checks if we are at the last value of i in the loop and, if so, runs a special case checking the last part of the route 
-          if(i === lastStartPoint){
-            //when at the last value of i, checks from that value to the final index
-            endCoordinate = {lat: res.data.routes.features[0].geometry.paths[0][resLength-1][1], lng:  res.data.routes.features[0].geometry.paths[0][resLength-1][0]}
-          } else {
-            //when not at the last value of i in the loop, that value to another value based on the increment
-            endCoordinate = {lat: res.data.routes.features[0].geometry.paths[0][i + increment][1], lng:  res.data.routes.features[0].geometry.paths[0][i + increment][0]}
+            startCoordinate = { lat: res.data.routes.features[0].geometry.paths[0][i][1], lng: res.data.routes.features[0].geometry.paths[0][i][0] }
+
+            //checks if we are at the last value of i in the loop and, if so, runs a special case checking the last part of the route 
+            if (i === lastStartPoint) {
+              //when at the last value of i, checks from that value to the final index
+              endCoordinate = { lat: res.data.routes.features[0].geometry.paths[0][resLength - 1][1], lng: res.data.routes.features[0].geometry.paths[0][resLength - 1][0] }
+            } else {
+              //when not at the last value of i in the loop, that value to another value based on the increment
+              endCoordinate = { lat: res.data.routes.features[0].geometry.paths[0][i + increment][1], lng: res.data.routes.features[0].geometry.paths[0][i + increment][0] }
+            }
+            //function that call the clearance api
+            //startCoordinate and endCoordinate are sent to make the API call, polyArrayLocal stores the response from the api, i and last startPoint are used check when the loops is finished
+            this.clearanceAPI(startCoordinate, endCoordinate, polyArrayLocal, i, lastStartPoint);
+
           }
-          //function that call the clearance api
-          //startCoordinate and endCoordinate are sent to make the API call, polyArrayLocal stores the response from the api, i and last startPoint are used check when the loops is finished
-          this.clearanceAPI(startCoordinate, endCoordinate, polyArrayLocal, i, lastStartPoint);
-          
-        }
 
-      }
+        }
       })
       .catch(err => {
         console.log("arc route err:", err);
-        this.setState({loading: "problem with initial route, please try again"});
+        this.setState({ loading: "problem with initial route, please try again" });
       })
 
   }
@@ -205,11 +206,11 @@ class MapPage extends Component {
     //sets height to zero intially
     let heightOfSelectedVehicle = 0;
     //if height has been set for a vehicle, checks the height and assigns it as the value to be sent to the api
-    if(this.props.vehicles.vehicles){
-      this.props.vehicles.vehicles.map( e => {
+    if (this.props.vehicles.vehicles) {
+      this.props.vehicles.vehicles.map(e => {
         //checks if a vehicle has been selected by the user
-        if(e.id === this.props.selected_id){
-            heightOfSelectedVehicle = e.height;
+        if (e.id === this.props.selected_id) {
+          heightOfSelectedVehicle = e.height;
         }
         return heightOfSelectedVehicle;
       })
@@ -227,20 +228,20 @@ class MapPage extends Component {
     let makePolygon = (latitude, longitude) => {
       let polygon = [];
       polygon[0] = [longitude, latitude + .00007]
-      polygon[1] = [longitude - .0001 ,latitude - .0002];
+      polygon[1] = [longitude - .0001, latitude - .0002];
       polygon[2] = [longitude + .0001, latitude - .0001];
       return polygon;
     }
 
     axios.post("https://dr7ajalnlvq7c.cloudfront.net/fetch_low_clearance", bridgePost)
       .then(res => {
-          if(res){
-          
-          for(let j = 0; j < res.data.length; j++){
-             polyArrayLocal.push(makePolygon(res.data[j].latitude, res.data[j].longitude));
+        if (res) {
+
+          for (let j = 0; j < res.data.length; j++) {
+            polyArrayLocal.push(makePolygon(res.data[j].latitude, res.data[j].longitude));
           }
           //if we have made the final call to this api, as checked using values from the previous function, then we call the init route function
-          if(i === lastStartPoint){
+          if (i === lastStartPoint) {
             this.setState(
               {
                 ...this.state.polygonsArray,
@@ -253,17 +254,17 @@ class MapPage extends Component {
         }
       })
       .catch(err => {
-        this.setState({loading: "problem getting clearance info, please try again"})
+        this.setState({ loading: "problem getting clearance info, please try again" })
         console.log("clearance error:", err);
       })
   }
-  
+
   //makes call to the routing API with barriers included
   //displays route to API
   //calls pointsOfInterest()
-  initRoute = () => {  
+  initRoute = () => {
     this.setMapToState();
-    this.setState({loading: "making final route"})
+    this.setState({ loading: "making final route" })
 
     var formData = new FormData();
     formData.append('f', 'json');
@@ -296,25 +297,25 @@ class MapPage extends Component {
     }
     axios.post("https://route.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World/solve", formData, config)
       .then(res => {
-        this.setState({Coordinates: []})
-       for (let i = 0; i < res.data.routes.features[0].geometry.paths[0].length; i++) {
+        this.setState({ Coordinates: [] })
+        for (let i = 0; i < res.data.routes.features[0].geometry.paths[0].length; i++) {
           let lng = res.data.routes.features[0].geometry.paths[0][i][0];
           let lat = res.data.routes.features[0].geometry.paths[0][i][1];
           parseFloat(lat);
           parseFloat(lng);
-          let Coordinate = [ null, null ]
+          let Coordinate = [null, null]
           Coordinate[1] = lat;
           Coordinate[0] = lng;
           this.setState({
             Coordinates: [...this.state.Coordinates, Coordinate]
-          }) 
+          })
         }
         let directionsResArr = res.data.directions[0].features;
         let newDirectionsArray = [];
-        for(let i = 0; i < directionsResArr.length; i++){
-           newDirectionsArray.push (directionsResArr[i].attributes.text);
+        for (let i = 0; i < directionsResArr.length; i++) {
+          newDirectionsArray.push(directionsResArr[i].attributes.text);
         }
-        this.setState({textDirections: newDirectionsArray})
+        this.setState({ textDirections: newDirectionsArray })
 
         //NOTE: the following loop will display markes for all the low clearance trianges on the map
         //it is commented out as it makes the UI cluttered for the user
@@ -334,12 +335,12 @@ class MapPage extends Component {
         //     }) 
         //   }
         // }
-    
+
         this.pointsOfInterest();
 
         loadModules([
-          'esri/Map', 
-          'esri/views/MapView', 
+          'esri/Map',
+          'esri/views/MapView',
           "esri/Graphic",
           "esri/layers/GraphicsLayer",
           "esri/widgets/Track"
@@ -351,7 +352,7 @@ class MapPage extends Component {
 
           const graphicsLayer = new GraphicsLayer();
           map.add(graphicsLayer);
-    
+
           const view = new MapView({
             container: this.mapRef.current,
             map: map,
@@ -372,41 +373,41 @@ class MapPage extends Component {
 
           let endPoint = {
             type: "point",
-            longitude: this.state.Coordinates[this.state.Coordinates.length-1][0],
-            latitude: this.state.Coordinates[this.state.Coordinates.length-1][1]
+            longitude: this.state.Coordinates[this.state.Coordinates.length - 1][0],
+            latitude: this.state.Coordinates[this.state.Coordinates.length - 1][1]
           };
 
           let startMarkerSymbol = {
             type: "simple-marker",
-            color: "dodgerblue",  
+            color: "dodgerblue",
             outline: {
               color: [255, 255, 255], // white
               width: 1
             }
           };
 
-          
+
           let endMarkerSymbol = {
             type: "simple-marker",
-            color: "green",  
+            color: "green",
             outline: {
               color: [255, 255, 255], // white
               width: 1
             }
           };
-   
+
           let sPointGraphic = new Graphic({
             geometry: startPoint,
             symbol: startMarkerSymbol
           });
-   
+
           graphicsLayer.add(sPointGraphic);
 
           let ePointGraphic = new Graphic({
             geometry: endPoint,
             symbol: endMarkerSymbol
           });
-   
+
           graphicsLayer.add(ePointGraphic);
 
           let simpleLineSymbol = {
@@ -427,11 +428,11 @@ class MapPage extends Component {
           });
           view.ui.add(track, "top-left");
 
-          this.setState({loading: "routing successful"})
+          this.setState({ loading: "routing successful" })
         })
       })
       .catch(err => {
-        this.setState({loading: "problem making final route, please try again"})
+        this.setState({ loading: "problem making final route, please try again" })
         console.log("arc route err:", err);
       })
   }
@@ -440,10 +441,10 @@ class MapPage extends Component {
   //checks if any points of interest have been checked off
   //if yes, calls pointOfInterest() and passes in the relevant information
   pointsOfInterest = () => {
-    if(this.state.walmartSelected === true){
+    if (this.state.walmartSelected === true) {
       this.pointOfInterestAPI("walmart", "lightblue");
     }
-    if(this.state.campsiteSelected === true){
+    if (this.state.campsiteSelected === true) {
       this.pointOfInterestAPI("campsite", "tan");
     }
   }
@@ -451,13 +452,13 @@ class MapPage extends Component {
   //makes a call to the point of interest api
   pointOfInterestAPI = (type, color) => {
     var bar = {
-//      path: 'M 125,5 155,90 245,90 175,145 200,230 125,180 50,230 75,145 5,90 95,90 z',
+      //      path: 'M 125,5 155,90 245,90 175,145 200,230 125,180 50,230 75,145 5,90 95,90 z',
       path: 'M -30 -10, 30 -10, 30 10, 5 10, 0 20, -5 10, -30 10 z',
       fillColor: `${color}`,
       fillOpacity: 1,
       scale: 1,
       strokeColor: `${color}`,
-      strokeWeight:1
+      strokeWeight: 1
     };
 
     let post = {
@@ -465,17 +466,17 @@ class MapPage extends Component {
       "longitude": this.state.endCoord.geometry.x,
       "distance": parseInt(this.state.pointOfInterestDistance)
     }
-  
+
 
     axios.post(`https://dr7ajalnlvq7c.cloudfront.net/fetch_${type}`, post)
       .then(res => {
-        if(res){
+        if (res) {
           res.data.map(e => {
             new window.google.maps.Marker({
               map: this.state.map,
               icon: bar,
               label: `${type}`,
-              position: {lat: e.latitude, lng: e.longitude}      
+              position: { lat: e.latitude, lng: e.longitude }
             })
           })
         }
