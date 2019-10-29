@@ -198,7 +198,8 @@ class VehicleForm extends React.Component {
             <p id='vehicleAddTitle'>Add a Vehicle</p>
             <h4 className="vehicle-spec">Name (required)</h4>
             <div className='measurements'>
-              <input        
+              <input 
+                className="vehicle-name"       
                 type="string"
                 required
                 name='name'
@@ -333,8 +334,9 @@ class VehicleForm extends React.Component {
             </div>
           </div>
           <div className="radio">
+          <h4 className="vehicle-spec">Axel Count</h4>
             <div className='thirdRow'>
-            <h4 className="vehicle-spec">Axel Count</h4>
+           
             <div className="form-section">
             <div className='measurements'>
               <div>
@@ -353,9 +355,9 @@ class VehicleForm extends React.Component {
             </div>
             </div>
            
-    
+            <div className="class-radios">
        <h4 className="vehicle-spec">Class</h4>
-          <div className="class-radios">
+         
             <Form.Check name="class"inline label="A" type="radio" id={`inline-text-1`} 
             value="A"
             checked={this.state.specifications.class_name === "A"} onChange={this.handleRadio}
@@ -373,6 +375,7 @@ class VehicleForm extends React.Component {
           <a target="_blank" rel="noopener noreferrer" href="https://rvs.autotrader.com/articles/buying-a-recreational-vehicle-rv-classes-explained">What class of vehicle do I have?</a>
           </div>
       </div>
+      <div className = "tires">
           <p className="vehicle-spec">Tires</p>
           <Form.Check 
           name="dual_tires" 
@@ -382,7 +385,7 @@ class VehicleForm extends React.Component {
           label="I have a dual wheel vehicle" 
           id={`inline-text-2`} 
           />
-
+      </div>
           <Button type="submit" variant="warning" onClick={this.vehicleSubmit}>Submit</Button>
           </div>
           </div>
