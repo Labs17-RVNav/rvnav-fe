@@ -6,7 +6,7 @@
     margin: 25px;
     top: 0;
     left: 0;
-    background-color: #0f0f0f;
+    background: #2A2E43;
     overflow-x: hidden;
     transition: 0.5s;
 }
@@ -14,36 +14,38 @@
 .open{
     width: 360px;
 }
+
 .overlay-content {
     position: relative;
     top: 0%;
     width: 100%;
     text-align: center;
-    margin-top: 30px;
+    margin-top: 83px;
 }
+
 .overlay.close .overlay-content{
     opacity: 0;
 }
-.overlay.open .overlay-content{
-    
-}
+
 .overlay .closebtn, .overlay .openbtn {
     position: absolute;
     top: 20px;
     right: 45px;
     font-size: 60px;
 }
+
 .close-button-wrap{
- width: 100%;
- height: 120px;
+    width: 100%;
+    height: 120px;
 }
 
 .fa-arrow-circle-left{
     margin: 8px 0 8px 85%;
-    background-color: #0f0f0f;
+    background: #2A2E43;
     color: white;
     font-size: 2.1rem;
 }
+
 .fa-arrow-circle-left:hover{
     cursor:pointer;
 }
@@ -55,11 +57,7 @@
     padding: 8px;
     white-space: nowrap;
 }
-@media(max-width: 700px){
-    .sidebar-tab{
-        padding: 8px 3px;
-    }
-}
+
 .sidebar-tabs{
     display: flex;
     justify-content: flex-start;
@@ -68,58 +66,164 @@
     margin: -30px 0 10px 0;
     flex-wrap: wrap;
 }
+
 .selected{
     color: white;
     background-color: #6C757D;
     border-bottom: 3px solid #ffc107;
     margin: 1px;
     padding: 8px 8px 5px 8px;
-    
 }
+
 .off{
     display: none;
 }
+
 .on{
     display: block;
 }
+
 .route-form{
     padding: 6px;
     margin: 35px 5px 5px 5px;
 }
+
 .route-input{
     margin-bottom: 22px;
     border-radius: 4px;
     padding: 10px;
 }
+
 #route-button{
-    width: 120px;
+    /* width: 120px;
     margin-left: 180px;
-    border-radius: 4px;
+    border-radius: 4px; */
+    position: absolute;
+    /* left: 0%;
+    right: 0%;
+    top: 0%;
+    bottom: 0%; */
+    /* Primary 100% */
+    background: #00B2D9;
+    border-radius: 3px;
 }
+
 .login-to-add{
     margin-top: 60px;
     padding: 5px;
 }
+
 .route-tab{
     margin-left: 12px;
 }
 
-
-
-/* @media (max-width: 900px){
-    .open{
-        width: 320px;
-    }
-    #route-button{
-       margin-left: 60px; 
-    }
-} */
-@media (max-width: 700px){
-    .open{
-        width: 265px;
-    }
-    #route-button{
-        margin-left: 100px; 
-     }
+a.rv-way-text {
+    color: rgba(53, 195, 226, 0.95);
 }
+
+@media (max-width: 375px){
+    
+    .sidebar-tab{
+        padding: 8px 3px;
+    }
+
+    .navbar {
+        position: absolute;
+        width: 375px;
+        height: 70px;
+        left: 0px;
+        top: 0px;
+        /* white background */
+        background: #F8F9FA;
+    }
+
+    .route-input {
+        margin-bottom: 15px;
+        border-radius: 4px;
+        padding: 10px;
+        width: -webkit-fill-available;
+    }
+    .route-input .form-control #start{
+        height: 45px;
+        width: 340px;
+        margin-bottom: 10px;
+        margin-left: 8px;
+        margin-top: -3px;
+    }
+
+    .route-input .form-control #end{
+        height: 45px;
+        width: 340px;
+        margin-bottom: 10px;
+        margin-left: 8px;
+        margin-top: -3px;
+    }
+
+    .choose-a-starting-point {
+        color: #F8F9FA;
+        margin-bottom: 2px;
+    }
+    
+    .where-are-you-going {
+        color: #F8F9FA;
+        margin-bottom: 2px;
+    }
+
+    a.rv-way-text {
+        color: rgba(53, 195, 226, 0.95);
+        position: absolute;
+        left: 6.67%;
+        right: 60.53%;
+        top: 24.29%;
+        bottom: 22.86%;
+        /* H1 Mobile/ Helvetica Bold 32 */
+        font-family: Helvetica;
+        font-size: 32px;
+        line-height: 37px;
+        /* identical to box height */
+        display: flex;
+        align-items: center;
+        /* Primary 100% */
+    }
+
+    .route-form {
+        margin: 10px 5px 5px 5px;
+        background: #2A2E43;
+    }
+
+    .open{
+        width: 100%;
+        height: 48%;
+    }
+
+    #route-button{
+        /* margin: auto;  */
+    /* margin: auto; */
+        color: white;
+        width: 94%;
+        height: 45px;
+        margin: 10px 0px;
+        font-size: 20px;
+        font-family: Helvetica;
+     }
+
+     .btn-warning {
+        border-color: rgba(53, 195, 226, 0.95);
+     }
+
+     .selected-vehicle {
+        border-bottom: 1px solid #fff;
+     }
+     
+     .selected-vehicle-text {
+        margin-top: 30px;
+        display: flex;
+        margin-left: 20px;
+        margin-bottom: 10px;
+     }
+     .overlay-content {
+        margin-top: 83px;
+    }
+}
+
 
