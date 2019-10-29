@@ -195,10 +195,10 @@ class VehicleForm extends React.Component {
           <h2>RV WAY</h2>
           <div className='FormContainer'>
             <h6>Back</h6>
-            <h3 id='vehicleAddTitle'>Add a Vehicle</h3>
+            <p id='vehicleAddTitle'>Add a Vehicle</p>
             <h4 className="vehicle-spec">Name (required)</h4>
             <div className='measurements'>
-              <div        
+              <input        
                 type="string"
                 required
                 name='name'
@@ -206,7 +206,7 @@ class VehicleForm extends React.Component {
                 value={this.state.specifications.name}
                 onChange={this.handleText}
               >
-              </div>
+              </input>
           </div>
           <div className='measurementsParent'>
             <div className='inputsFieldsContainer'>
@@ -275,42 +275,47 @@ class VehicleForm extends React.Component {
               </div>
             </div>
           </div>
-            <h4 className="vehicle-spec">Length</h4>
-            <div className="form-section">
-            <div className='measurements'>
-              <div>
-                <p>Feet</p>
-                <input        
-                  type="number"
-                  min="0"
-                  max="100"
-                  name='lengthFeet'
-                  placeholder="0"
-                  value={this.state.specifications.lengthFeet}
-                  onChange={this.handleChange}
-                >
-                </input>
-              </div>
+          <div className='measurementsParent'>
+            <div className='inputsFieldsContainer'>
+              <h4 className="vehicle-spec">Length</h4>
+               <div className="form-section">
+                 <div className='measurements'>
+                   <div>
+                   <p>Feet</p>
+                   <input        
+                    type="number"
+                    min="0"
+                    max="100"
+                    name='lengthFeet'
+                    placeholder="0"
+                    value={this.state.specifications.lengthFeet}
+                    onChange={this.handleChange}
+                     >
+                    </input>
+                   </div>
+                 </div>
+               <p className="plus">+</p>
+              
+             <div>
+                 <p>Inches</p>
+                  <input        
+                    type="number"
+                    min="0"
+                    max="11"
+                    name='lengthInches'
+                    placeholder="0"
+                    value={this.state.specifications.lengthInches}
+                    onChange={this.handleChange}
+                   >
+                 </input>
+                 </div>
+               </div>
             </div>
-            <p className="plus">+</p>
-            <div>
-            <p>Inches</p>
-              <input        
-                type="number"
-                min="0"
-                max="11"
-                name='lengthInches'
-                placeholder="0"
-                value={this.state.specifications.lengthInches}
-                onChange={this.handleChange}
-              >
-            </input>
-            </div>
-            </div>
+             <div className='inputsFieldsContainer'>
             <h4 className="vehicle-spec">Weight</h4>
-            <div className="form-section">
-            <div className='measurements'>
-              <div>
+             <div className="form-section">
+              <div className='measurements'>
+              
                 <p>Pounds</p>
                 <input        
                   type="number"
@@ -323,8 +328,12 @@ class VehicleForm extends React.Component {
                 >
                 </input>
               </div>
+            
             </div>
             </div>
+          </div>
+          <div className="radio">
+            <div className='thirdRow'>
             <h4 className="vehicle-spec">Axel Count</h4>
             <div className="form-section">
             <div className='measurements'>
@@ -343,28 +352,27 @@ class VehicleForm extends React.Component {
               </div>
             </div>
             </div>
-            <p className="vehicle-spec">Class</p>
+           
+    
+       <h4 className="vehicle-spec">Class</h4>
           <div className="class-radios">
-          <Form.Check name="class"inline label="A" type="radio" id={`inline-text-1`} 
-          value="A"
-          checked={this.state.specifications.class_name === "A"} onChange={this.handleRadio}
-          />
-          <Form.Check name="class" inline label="B" type="radio" id={`inline-text-2`} 
-          value="B"
-          checked={this.state.specifications.class_name === "B"} onChange={this.handleRadio}
-          />
-          <Form.Check name="class" inline label="C" type="radio" id={`inline-text-2`} 
-          value="C"
-          checked={this.state.specifications.class_name === "C"} onChange={this.handleRadio}
-          />
-          {/* <Form.Check name="class" inline label="Trailer" type="radio" 
-                value="Trailer"
-                checked={this.state.specifications.class_name === "Trailer"}
-                onChange={this.handleRadio}
-          id={`inline-text-2`} /> */}
+            <Form.Check name="class"inline label="A" type="radio" id={`inline-text-1`} 
+            value="A"
+            checked={this.state.specifications.class_name === "A"} onChange={this.handleRadio}
+            />
+            <Form.Check name="class" inline label="B" type="radio" id={`inline-text-2`} 
+            value="B"
+            checked={this.state.specifications.class_name === "B"} onChange={this.handleRadio}
+            />
+            <Form.Check name="class" inline label="C" type="radio" id={`inline-text-2`} 
+            value="C"
+            checked={this.state.specifications.class_name === "C"} onChange={this.handleRadio}
+            />
           </div>
+           </div>
           <a target="_blank" rel="noopener noreferrer" href="https://rvs.autotrader.com/articles/buying-a-recreational-vehicle-rv-classes-explained">What class of vehicle do I have?</a>
-
+          </div>
+      </div>
           <p className="vehicle-spec">Tires</p>
           <Form.Check 
           name="dual_tires" 
@@ -378,7 +386,7 @@ class VehicleForm extends React.Component {
           <Button type="submit" variant="warning" onClick={this.vehicleSubmit}>Submit</Button>
           </div>
           </div>
-        </div>
+        {/* </div> */}
       </div>
     )
   }
