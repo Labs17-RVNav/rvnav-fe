@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { withRouter } from 'react-router-dom';
 import { connect } from "react-redux";
 import { addVehicle, updateVehicle } from "../../store/actions";
@@ -188,191 +187,198 @@ class VehicleForm extends React.Component {
   }
 
   render(){
-    console.log("form props", this.props)
+    // console.log("form props", this.props)
     return(
-      <div>
-        
-      <Form className="vehicle-form" onSubmit={this.vehicleSubmit}>
-      <p className="vehicle-spec">Name</p>
-      <Form.Group>
-        <Form.Label>(required)</Form.Label>
-          <Form.Control        
-            type="string"
-            required
-            name='name'
-            placeholder="The Mystery Machine"
-            value={this.state.specifications.name}
-            onChange={this.handleText}
-            >
-        </Form.Control>
-        </Form.Group>
-      <p className="vehicle-spec">Height</p>
-        <div className="form-section">  
-        <Form.Group>
-        <Form.Label>Feet</Form.Label>
-          <Form.Control        
-            type="number"
-            min="0"
-            max="100"
-            name='heightFeet'
-            placeholder="0"
-            value={this.state.specifications.heightFeet}
-            onChange={this.handleChange}
-            >
-        </Form.Control>
-        </Form.Group>
-        <p className="plus">+</p>
-        <Form.Group>
-        <Form.Label>Inches</Form.Label>
-          <Form.Control        
-            type="number"
-            min="0"
-            max="11"
-            name='heightInches'
-            placeholder="0"
-            
-            // this.state.specifications.heighInches === 0 ? undefined :
-            value={ this.state.specifications.heightInches}
-            onChange={this.handleChange}
-            >
-        </Form.Control>
-        </Form.Group>
+      <div className='WidgetWrapper'> 
+        <div className='vehicle-form-wrap'>
+        <div className="vehicle-form" onSubmit={this.vehicleSubmit}>
+          <h2>RV WAY</h2>
+          <div className='FormContainer'>
+            <h6>Back</h6>
+            <h3 id='vehicleAddTitle'>Add a Vehicle</h3>
+            <h4 className="vehicle-spec">Name (required)</h4>
+            <div className='measurements'>
+              <div        
+                type="string"
+                required
+                name='name'
+                placeholder="The Mystery Machine"
+                value={this.state.specifications.name}
+                onChange={this.handleText}
+              >
+              </div>
+          </div>
+          <div className='measurementsParent'>
+            <div className='inputsFieldsContainer'>
+              <h4 className="vehicle-spec">Height</h4>
+              <div className="form-section">  
+                <div className='measurements'>
+                  <p>Feet</p>
+                  <input        
+                    type="number"
+                    min="0"
+                    max="100"
+                    name='heightFeet'
+                    placeholder="0"
+                    value={this.state.specifications.heightFeet}
+                    onChange={this.handleChange}
+                  >
+                  </input>
+                </div>
+                <p className="plus">+</p>
+                <div className="measurements">
+                  <p>Inches</p>
+                  <input        
+                    type="number"
+                    min="0"
+                    max="11"
+                    name='heightInches'
+                    placeholder="0"
+                    // this.state.specifications.heighInches === 0 ? undefined :
+                    value={ this.state.specifications.heightInches}
+                    onChange={this.handleChange}
+                  >
+                </input>
+                </div>
+              </div>
+            </div>
+            <div className='inputsFieldsContainer'>
+              <h4 className="vehicle-spec">Width</h4>
+              <div className="form-section">
+              <div className="measurements">
+                <p>Feet</p>
+                <input        
+                  type="number"
+                  min="0"
+                  max="100"
+                  name='widthFeet'
+                  placeholder="0"
+                  value={this.state.specifications.widthFeet}
+                  onChange={this.handleChange}
+                >
+              </input>
+              </div>
+              <p className="plus">+</p>
+              <div className="measurements">
+              <p>Inches</p>
+                <input        
+                  type="number"
+                  min="0"
+                  max="11"
+                  name='widthInches'
+                  placeholder="0"
+                  value={this.state.specifications.widthInches}
+                  onChange={this.handleChange}
+                >
+              </input>
+              </div>
+              </div>
+            </div>
+          </div>
+            <h4 className="vehicle-spec">Length</h4>
+            <div className="form-section">
+            <div className='measurements'>
+              <div>
+                <p>Feet</p>
+                <input        
+                  type="number"
+                  min="0"
+                  max="100"
+                  name='lengthFeet'
+                  placeholder="0"
+                  value={this.state.specifications.lengthFeet}
+                  onChange={this.handleChange}
+                >
+                </input>
+              </div>
+            </div>
+            <p className="plus">+</p>
+            <div>
+            <p>Inches</p>
+              <input        
+                type="number"
+                min="0"
+                max="11"
+                name='lengthInches'
+                placeholder="0"
+                value={this.state.specifications.lengthInches}
+                onChange={this.handleChange}
+              >
+            </input>
+            </div>
+            </div>
+            <h4 className="vehicle-spec">Weight</h4>
+            <div className="form-section">
+            <div className='measurements'>
+              <div>
+                <p>Pounds</p>
+                <input        
+                  type="number"
+                  min="0"
+                  max="99000"
+                  name='weight'
+                  placeholder="0"
+                  value={this.state.specifications.weight}
+                  onChange={this.handleChange}
+                >
+                </input>
+              </div>
+            </div>
+            </div>
+            <h4 className="vehicle-spec">Axel Count</h4>
+            <div className="form-section">
+            <div className='measurements'>
+              <div>
+                <p>Axels</p>
+                <input        
+                  type="number"
+                  min="0"
+                  max="10"
+                  name='axel_count'
+                  placeholder="0"
+                  value={this.state.specifications.axel_count}
+                  onChange={this.handleChange}
+                >
+                </input>
+              </div>
+            </div>
+            </div>
+            <p className="vehicle-spec">Class</p>
+          <div className="class-radios">
+          <Form.Check name="class"inline label="A" type="radio" id={`inline-text-1`} 
+          value="A"
+          checked={this.state.specifications.class_name === "A"} onChange={this.handleRadio}
+          />
+          <Form.Check name="class" inline label="B" type="radio" id={`inline-text-2`} 
+          value="B"
+          checked={this.state.specifications.class_name === "B"} onChange={this.handleRadio}
+          />
+          <Form.Check name="class" inline label="C" type="radio" id={`inline-text-2`} 
+          value="C"
+          checked={this.state.specifications.class_name === "C"} onChange={this.handleRadio}
+          />
+          {/* <Form.Check name="class" inline label="Trailer" type="radio" 
+                value="Trailer"
+                checked={this.state.specifications.class_name === "Trailer"}
+                onChange={this.handleRadio}
+          id={`inline-text-2`} /> */}
+          </div>
+          <a target="_blank" rel="noopener noreferrer" href="https://rvs.autotrader.com/articles/buying-a-recreational-vehicle-rv-classes-explained">What class of vehicle do I have?</a>
+
+          <p className="vehicle-spec">Tires</p>
+          <Form.Check 
+          name="dual_tires" 
+          type="checkbox"
+          checked={this.state.specifications.dual_tires}
+          onChange={this.handleCheck}
+          label="I have a dual wheel vehicle" 
+          id={`inline-text-2`} 
+          />
+
+          <Button type="submit" variant="warning" onClick={this.vehicleSubmit}>Submit</Button>
+          </div>
+          </div>
         </div>
-
-
-        <p className="vehicle-spec">Width</p>
-        <div className="form-section">
-        <Form.Group>
-          <Form.Label>Feet</Form.Label>
-          <Form.Control        
-            type="number"
-            min="0"
-            max="100"
-            name='widthFeet'
-            placeholder="0"
-            value={this.state.specifications.widthFeet}
-            onChange={this.handleChange}
-            >
-        </Form.Control>
-        </Form.Group>
-        <p className="plus">+</p>
-        <Form.Group>
-        <Form.Label>Inches</Form.Label>
-          <Form.Control        
-            type="number"
-            min="0"
-            max="11"
-            name='widthInches'
-            placeholder="0"
-            value={this.state.specifications.widthInches}
-            onChange={this.handleChange}
-            >
-        </Form.Control>
-        </Form.Group>
-        </div>
-
-
-        <p className="vehicle-spec">Length</p>
-        <div className="form-section">
-        <Form.Group>
-          <Form.Label>Feet</Form.Label>
-          <Form.Control        
-            type="number"
-            min="0"
-            max="100"
-            name='lengthFeet'
-            placeholder="0"
-            value={this.state.specifications.lengthFeet}
-            onChange={this.handleChange}
-            >
-        </Form.Control>
-        </Form.Group>
-        <p className="plus">+</p>
-        <Form.Group>
-        <Form.Label>Inches</Form.Label>
-          <Form.Control        
-            type="number"
-            min="0"
-            max="11"
-            name='lengthInches'
-            placeholder="0"
-            value={this.state.specifications.lengthInches}
-            onChange={this.handleChange}
-            >
-        </Form.Control>
-        </Form.Group>
-        </div>
-
-
-        <p className="vehicle-spec">Weight</p>
-        <div className="form-section">
-        <Form.Group>
-          <Form.Label>Pounds</Form.Label>
-          <Form.Control        
-            type="number"
-            min="0"
-            max="99000"
-            name='weight'
-            placeholder="0"
-            value={this.state.specifications.weight}
-            onChange={this.handleChange}
-            >
-        </Form.Control>
-        </Form.Group>
-        </div>
-        <p className="vehicle-spec">Axel Count</p>
-        <div className="form-section">
-        <Form.Group>
-          <Form.Label>Axels</Form.Label>
-          <Form.Control        
-            type="number"
-            min="0"
-            max="10"
-            name='axel_count'
-            placeholder="0"
-            value={this.state.specifications.axel_count}
-            onChange={this.handleChange}
-            >
-        </Form.Control>
-        </Form.Group>
-        </div>
-
-
-        <p className="vehicle-spec">Class</p>
-      <Form.Group className="class-radios">
-      <Form.Check name="class"inline label="A" type="radio" id={`inline-text-1`} 
-      value="A"
-      checked={this.state.specifications.class_name === "A"} onChange={this.handleRadio}
-      />
-      <Form.Check name="class" inline label="B" type="radio" id={`inline-text-2`} 
-      value="B"
-      checked={this.state.specifications.class_name === "B"} onChange={this.handleRadio}
-      />
-      <Form.Check name="class" inline label="C" type="radio" id={`inline-text-2`} 
-      value="C"
-      checked={this.state.specifications.class_name === "C"} onChange={this.handleRadio}
-      />
-      {/* <Form.Check name="class" inline label="Trailer" type="radio" 
-            value="Trailer"
-            checked={this.state.specifications.class_name === "Trailer"}
-            onChange={this.handleRadio}
-      id={`inline-text-2`} /> */}
-      </Form.Group>
-      <a target="_blank" rel="noopener noreferrer" href="https://rvs.autotrader.com/articles/buying-a-recreational-vehicle-rv-classes-explained">What class of vehicle do I have?</a>
-
-      <p className="vehicle-spec">Tires</p>
-      <Form.Check 
-      name="dual_tires" 
-      type="checkbox"
-      checked={this.state.specifications.dual_tires}
-      onChange={this.handleCheck}
-      label="I have a dual wheel vehicle" 
-      id={`inline-text-2`} 
-      />
-
-      <Button type="submit" variant="warning" onClick={this.vehicleSubmit}>Submit</Button>
-        </Form>
-
       </div>
     )
   }
