@@ -60,15 +60,16 @@
   font-size: 1.3rem;
 }
 .radio-label{
-  margin-right: 80px;
-  padding-bottom: 42px;
+  margin-right: 60px;
+  padding-bottom: 22px;
 }
 .class-radios{
-  width:140px;
+ 
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
-  margin: 16px;
+  justify-content: space-between;
+  margin: 20px;
+  padding-top:20px;
 }
 .vehicle-form{
   /* margin-top: -10px;
