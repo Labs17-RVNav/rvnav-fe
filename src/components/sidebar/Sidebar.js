@@ -4,12 +4,14 @@ import VehicleForm from '../vehicleForm/VehicleForm';
 import Vehicles from '../vehicleForm/Vehicles';
 import RoutingForm from '../map/routingForm';
 import './sidebar.css';
+import RoutingSidebar from './sidebar-routing/sidebar-routing';
 
 const Sidebar = (props) => {
     const [state, setState] = useState({
         vehicleForm: "off",
         routing: "on",
-        vehicles: "off"
+        vehicles: "off",
+        directions: "off"
     })
     // console.log('props on Sidebar', props)
 
@@ -24,6 +26,7 @@ const Sidebar = (props) => {
             vehicleForm: "off",
             routing: "off",
             vehicles: "off",
+            directions: "on",
             [event.target.id]: "on"
         })
 
@@ -36,7 +39,7 @@ const Sidebar = (props) => {
                 <i className="fas fa-arrow-circle-left" onClick={props.toggleSidebar}></i>
             </div> */}
             <div class="navbar" >
-                <a class="rv-way-text">RV WAY</a>
+                {/* <a class="rv-way-text">RV WAY</a> */}
                 <a><i class="menu-icon"></i></a>
             </div>
 
@@ -44,8 +47,8 @@ const Sidebar = (props) => {
             <div className='overlay-content'>
 
                 <div >
-                    {/* <div className="sidebar-tabs">
-                        <p className={` route-tab ${state.routing === `on` ? `selected` : `sidebar-tab`} `}
+                    <div className="sidebar-tabs">
+                        {/* <p className={` route-tab ${state.routing === `on` ? `selected` : `sidebar-tab`} `}
                             id="routing"
                             onClick={buttonSelect}>Route</p>
 
@@ -55,11 +58,16 @@ const Sidebar = (props) => {
 
                         <p className={`${state.vehicleForm === `on` ? `selected` : `sidebar-tab`}   `}
                             id="vehicleForm"
-                            onClick={buttonSelect}>Add a Vehicle</p>
-                    </div> */}
+                            onClick={buttonSelect}>Add a Vehicle</p> */}
+
+                        {/* <p className={`${state.directions === `on` ? `selected` : `sidebar-tab`}   `}
+                            id="directions"
+                            onClick={buttonSelect}>Get Directions</p> */}
+                    </div>
 
                     <div className={`${state.routing}`}>
                         <RoutingForm
+                            buttonSelect={buttonSelect}
                             textDirections={props.textDirections}
                             toggle={props.toggle}
                             walmartSelected={props.walmartSelected}
@@ -92,7 +100,36 @@ const Sidebar = (props) => {
                             </NavLink>
                         </div>}
 
+                    {localStorage.token ? <div className={`${state.directions}`}>
+                        <RoutingSidebar  
+                            textDirections={props.textDirections}
+                            toggle={props.toggle}
+                            walmartSelected={props.walmartSelected}
+                            campsiteSelected={props.campsiteSelected}
+                            pointOfInterestDistance={props.pointOfInterestDistance}
+                            loading={props.loading}
+                            arcRoute={props.arcRoute}
+                            onChangeHandler={props.onChangeHandler}
+                            routeChangeHandler={props.routeChangeHandler}
+                            start={props.start}
+                            end={props.end}
+                        />
+                    </div> : null}
+
                 </div>
+                {/* <RoutingSidebar 
+                        textDirections={props.textDirections}
+                        toggle={props.toggle}
+                        walmartSelected={props.walmartSelected}
+                        campsiteSelected={props.campsiteSelected}
+                        pointOfInterestDistance={props.pointOfInterestDistance}
+                        loading={props.loading}
+                        arcRoute={props.arcRoute}
+                        onChangeHandler={props.onChangeHandler}
+                        routeChangeHandler={props.routeChangeHandler}
+                        start={props.start}
+                        end={props.end}
+                    /> */}
             </div>
             <div id='mainsidebar'>
                 {/* <button className = 'openbtn' onClick = {props.toggleSidebar}>Options</button> */}
