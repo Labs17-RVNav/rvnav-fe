@@ -24,15 +24,18 @@
   margin-right: 16px;
 }
 .form-section{
+  width: 140px;
   display: flex;
-  justify-content: flex;
+  flex-direction: row;
+  margin: 0px;
+}
+.thirdRow{
+  display:flex;
+  flex-direction: row;
+  margin: 5px;
+  padding:5px;
 }
 .vehicle-spec{
-  /* position: absolute; */
-  left: 3.19%;
-  right: 82.08%;
-  top: 20.21%;
-  bottom: 77.73%;
 
   /* H4 Mobile / Helvetica Regular 18 */
 
@@ -42,11 +45,13 @@
   /* identical to box height */
 
   display: flex;
-  align-items: center;
+  flex-direction: row;
 
   /* White text */
 
   color: rgba(237, 238, 241, 0.95);
+
+
 }
 .plus{
   display: flex;
@@ -55,14 +60,16 @@
   font-size: 1.3rem;
 }
 .radio-label{
-  margin-right: 80px;
-  padding-bottom: 42px;
+  margin-right: 60px;
+  padding-bottom: 22px;
 }
 .class-radios{
+ 
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
-  margin-bottom: 6px;
+  justify-content: space-between;
+  margin: 20px;
+  padding-top:20px;
 }
 .vehicle-form{
   /* margin-top: -10px;
@@ -116,4 +123,22 @@ h6{
 .measurements{
   display:flex;
   flex-direction:column;
+}
+
+p.vehicle-spec{
+  width:120px;
+}
+
+.tires{
+  width:210px;
+  display: flex;
+  flex-direction: column;
+  margin-left: 20px;
+  padding-bottom: 5px;
+}
+.vehicle-name{
+  width: 300px;
+
+  padding:0px;
+  margin:0px;
 }
