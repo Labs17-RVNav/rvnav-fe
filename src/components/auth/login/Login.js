@@ -105,29 +105,29 @@ class LoginForm extends React.Component {
           {this.props.error === "Invalid username or password" ? (
             <p className="error">Invalid username or password</p>
           ) : null}
-          <Form.Group>
+          <div className='MarketingFormContainer'>
             <Form.Label>Username</Form.Label>
-            <Form.Control
+            <input
               type="string"
               name="username"
               placeholder="Username"
               value={this.state.credentials.username}
               onChange={this.handleChange}
               required
-            ></Form.Control>
+            ></input>
             {errors.username.length > 0 && (
               <p className="error">{errors.username}</p>
             )}
 
             <Form.Label>Password</Form.Label>
-            <Form.Control
+            <input
               type="password"
               name="password"
               placeholder="Password"
               value={this.state.credentials.password}
               onChange={this.handleChange}
               required
-            ></Form.Control>
+            ></input>
             {errors.password.length > 0 && (
               <p className="error">{errors.password}</p>
             )}
@@ -135,7 +135,7 @@ class LoginForm extends React.Component {
             <Button variant="warning" type="submit" >
               Submit
             </Button>
-          </Form.Group>
+          </div>
         </Form>
 
             }

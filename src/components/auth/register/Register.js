@@ -138,16 +138,17 @@ class RegisterForm extends Component {
           <p className="auth-loading">Loading...</p>
         ) : (
           <Form>
-            <Form.Group>
+            <div className='MarketingFormContainer'>
               <Form.Label>Username*</Form.Label>
-              <Form.Control
+              <input
+                className='MarketingPageInputs'
                 name="username"
                 placeholder="Username"
                 type="string"
                 value={this.state.credentials.username}
                 onChange={this.handleChange}
                 noValidate
-              ></Form.Control>
+              ></input>
               {errors.username.length > 0 && (
                 <p className="error">{errors.username}</p>
               )}
@@ -156,32 +157,35 @@ class RegisterForm extends Component {
               ) : null}
 
               <Form.Label>First Name (Optional)</Form.Label>
-              <Form.Control
+              <input
+                className='MarketingPageInputs'
                 name="first_name"
                 placeholder="First name"
                 type="string"
                 value={this.state.credentials.first_name}
                 onChange={this.handleChange}
-              ></Form.Control>
+              ></input>
 
               <Form.Label>Last Name (Optional)</Form.Label>
-              <Form.Control
+              <input
+                className='MarketingPageInputs'
                 name="last_name"
                 placeholder="Last name"
                 type="string"
                 value={this.state.credentials.last_name}
                 onChange={this.handleChange}
-              ></Form.Control>
+              ></input>
 
               <Form.Label>Email*</Form.Label>
-              <Form.Control
+              <input
+                className='MarketingPageInputs'
                 name="email"
                 placeholder="Email"
                 type="email"
                 value={this.state.credentials.email}
                 onChange={this.handleChange}
                 noValidate
-              ></Form.Control>
+              ></input>
               {errors.email.length > 0 && (
                 <p className="error">{errors.email}</p>
               )}
@@ -190,14 +194,15 @@ class RegisterForm extends Component {
               )}
 
               <Form.Label>Password*</Form.Label>
-              <Form.Control
+              <input
+                className='MarketingPageInputs'
                 type="password"
                 name="password"
                 placeholder="Password"
                 value={this.state.credentials.password}
                 onChange={this.handleChange}
                 noValidate
-              ></Form.Control>
+              ></input>
               {errors.password.length > 0 && (
                 <p className="error">{errors.password}</p>
               )}
@@ -213,7 +218,7 @@ class RegisterForm extends Component {
               >
                 Submit
               </Button>
-            </Form.Group>
+            </div>
           </Form>
         )}
       </div>

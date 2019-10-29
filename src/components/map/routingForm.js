@@ -35,6 +35,7 @@ const RoutingForm = (props) => {
           </Accordion.Toggle>
           <Accordion.Collapse eventKey="2">
             <div className="point-of-interest-options">
+              <i class="fa fa-user icon"></i>
             <Form.Group className="search-distance-input">
               <Form.Label className="search-distance-label">distance, miles</Form.Label>
               <Form.Control 
