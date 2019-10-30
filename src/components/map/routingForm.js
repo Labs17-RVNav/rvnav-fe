@@ -4,6 +4,7 @@ import Form from 'react-bootstrap/Form';
 import Accordion from 'react-bootstrap/Accordion';
 import Card from 'react-bootstrap/Card';
 import { connect } from "react-redux";
+import { Link } from 'react-router-dom'
 
 const RoutingForm = (props) => {
   //changes "you are routing with" message at the top of the routing form
@@ -101,7 +102,7 @@ const RoutingForm = (props) => {
               </div>
             </Accordion.Collapse>
           </Accordion>*/}
-          <Button variant="warning" id="route-button" type="submit">Get Directions</Button>
+          <Button variant="warning" id="route-button" type="submit" onClick={props.buttonSelect}>Get Directions</Button>
         </form>
       </>
       {/* <p className="route-loading">{props.loading}</p>

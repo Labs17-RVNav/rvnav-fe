@@ -2,13 +2,21 @@
   width: 100%;
   min-height: 100vh;
   background: #000 url("../../assets/img/rv-bg.jpg") no-repeat bottom right
-    fixed;
+  fixed;
   background-size: cover;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-direction: column;
 }
+
+/* .MarketingFormContainer{
+                              //<-----------Classes added to replace bootstrap form management on the marketing website login/register inputs
+}
+
+.MarketingPageInputs{
+
+} */
 
 .image-link {
   width: 80px;

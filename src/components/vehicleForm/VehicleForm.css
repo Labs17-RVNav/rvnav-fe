@@ -123,8 +123,6 @@ h6{
 .measurements{
   display:flex;
   flex-direction:column;
-  
-
 }
 
 p.vehicle-spec{

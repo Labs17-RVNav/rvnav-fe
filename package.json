@@ -21,6 +21,7 @@
     "react-testing-library": "^8.0.1",
     "redux": "^4.0.4",
     "redux-thunk": "^2.3.0",
+    "sass": "^1.23.1",
     "styled-components": "^4.4.0",
     "testing-library": "^0.0.2"
   },
